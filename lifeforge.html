@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0f">
+<title>LifeForge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #18181f;
+  --card: #1c1c26;
+  --card2: #22222e;
+  --border: rgba(255,255,255,0.07);
+  --accent: #6c63ff;
+  --accent2: #ff6584;
+  --accent3: #43e97b;
+  --accent4: #f7971e;
+  --text: #f0f0f8;
+  --text2: #9090a8;
+  --text3: #5a5a72;
+  --gold: #ffd700;
+  --radius: 18px;
+  --radius-sm: 10px;
+  --nav-h: 72px;
+  --header-h: 60px;
+}
+.light {
+  --bg: #f4f4f8;
+  --bg2: #ebebf2;
+  --bg3: #e0e0ea;
+  --card: #ffffff;
+  --card2: #f8f8fc;
+  --border: rgba(0,0,0,0.07);
+  --text: #16161e;
+  --text2: #5a5a72;
+  --text3: #aaaabc;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px}
+#app{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── HEADER ── */
+.header{
+  height:var(--header-h);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;background:var(--bg);border-bottom:1px solid var(--border);
+  position:relative;z-index:100;
+}
+.header-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:-0.5px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-right{display:flex;gap:10px;align-items:center}
+.lang-btn{padding:5px 10px;border-radius:20px;background:var(--card);border:1px solid var(--border);
+  color:var(--text2);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s}
+.lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.theme-btn{width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.2s}
+
+/* ── SCREENS ── */
+.screen{display:none;flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h)+20px)}
+.screen.active{display:block}
+.scroll-pad{padding:16px 16px 0}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  height:var(--nav-h);flex-shrink:0;display:flex;align-items:center;
+  background:var(--bg2);border-top:1px solid var(--border);padding:0 4px;
+  position:relative;z-index:100;
+}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  cursor:pointer;padding:8px 4px;border-radius:var(--radius-sm);transition:.15s;color:var(--text3)}
+.nav-item.active{color:var(--accent)}
+.nav-item svg{width:22px;height:22px;transition:.15s}
+.nav-item.active svg{filter:drop-shadow(0 0 6px var(--accent))}
+.nav-label{font-size:10px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px}
+
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:var(--radius);padding:18px;border:1px solid var(--border);margin-bottom:12px}
+.card-sm{background:var(--card);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border)}
+.section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+
+/* ── HOME ── */
+.hero{
+  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+  border-radius:var(--radius);padding:24px;margin-bottom:12px;position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;
+  background:radial-gradient(circle,rgba(108,99,255,.3) 0%,transparent 70%);border-radius:50%}
+.hero-greeting{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:4px}
+.hero-name{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff}
+.hero-level{display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+  background:rgba(255,255,255,.1);padding:5px 12px;border-radius:20px;font-size:13px;color:rgba(255,255,255,.9)}
+.xp-bar-wrap{margin-top:14px}
+.xp-bar-label{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px}
+.xp-bar{height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--accent),#a78bfa);border-radius:3px;transition:width 1s ease}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border);position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;bottom:-10px;right:-10px;width:50px;height:50px;border-radius:50%;opacity:.15}
+.stat-card.purple::after{background:var(--accent)}
+.stat-card.red::after{background:var(--accent2)}
+.stat-card.green::after{background:var(--accent3)}
+.stat-card.orange::after{background:var(--accent4)}
+.stat-icon{font-size:22px;margin-bottom:6px}
+.stat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+.stat-label{font-size:11px;color:var(--text3);margin-top:2px}
+
+.progress-item{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.progress-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.progress-info{flex:1}
+.progress-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.progress-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.progress-pct{font-size:12px;color:var(--text2);margin-left:8px;flex-shrink:0}
+
+/* ── LIFE INDEX ── */
+.life-index-wrap{display:flex;align-items:center;gap:16px}
+.life-ring{position:relative;width:90px;height:90px;flex-shrink:0}
+.life-ring svg{transform:rotate(-90deg)}
+.life-ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+.life-ring-num span{font-size:10px;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--text3)}
+.life-bars{flex:1}
+.life-bar-item{margin-bottom:8px}
+.life-bar-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.life-bar-row span:first-child{color:var(--text2)}
+.life-bar-row span:last-child{font-weight:600}
+.life-bar-bg{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.life-bar-fill{height:100%;border-radius:2px}
+
+/* ── CHARACTER ── */
+.char-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.char-stat{background:var(--card);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border)}
+.char-stat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.char-stat-name{font-size:12px;color:var(--text2)}
+.char-stat-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:800}
+.char-stat-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:6px}
+.char-stat-fill{height:100%;border-radius:2px}
+
+.rank-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:30px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:16px}
+
+/* ── WORKOUTS ── */
+.workout-card{background:var(--card);border-radius:var(--radius);padding:18px;border:1px solid var(--border);margin-bottom:12px;cursor:pointer;transition:.15s}
+.workout-card:active{transform:scale(.98)}
+.workout-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.workout-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.workout-badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.exercise-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.exercise-row:last-child{border-bottom:none}
+.ex-icon{width:38px;height:38px;border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ex-info{flex:1}
+.ex-name{font-size:14px;font-weight:600}
+.ex-sets{font-size:12px;color:var(--text3);margin-top:2px}
+.ex-pr{font-size:12px;font-weight:600;color:var(--accent3)}
+
+.btn{padding:13px 22px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;border:none;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn:active{transform:scale(.97)}
+.btn-full{width:100%;justify-content:center}
+
+/* ── NUTRITION ── */
+.macro-ring-wrap{display:flex;justify-content:space-around;align-items:center;padding:10px 0}
+.macro-item{text-align:center}
+.macro-circle{width:60px;height:60px;border-radius:50%;border:4px solid;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;margin:0 auto 6px}
+.macro-label{font-size:11px;color:var(--text3)}
+.macro-g{font-size:12px;font-weight:600;color:var(--text2)}
+
+.meal-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border);margin-bottom:8px}
+.meal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.meal-name{font-weight:700;font-size:14px}
+.meal-cal{font-size:12px;color:var(--text3)}
+.meal-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.meal-item:last-child{border-bottom:none}
+
+/* ── TASKS ── */
+.task-item{display:flex;align-items:center;gap:12px;padding:13px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:.15s}
+.task-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.2s}
+.task-item.done .task-check{background:var(--accent3);border-color:var(--accent3)}
+.task-item.done .task-text{text-decoration:line-through;color:var(--text3)}
+.task-info{flex:1}
+.task-text{font-size:14px;font-weight:500}
+.task-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.task-xp{font-size:12px;font-weight:700;color:var(--gold)}
+.priority-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── HABITS ── */
+.habit-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:8px}
+.habit-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.habit-info{flex:1}
+.habit-name{font-size:14px;font-weight:600}
+.habit-streak{font-size:12px;color:var(--accent4);margin-top:2px}
+.habit-days{display:flex;gap:4px;margin-top:6px}
+.habit-day{width:20px;height:20px;border-radius:4px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--text3)}
+.habit-day.done{background:var(--accent3);color:#fff}
+.habit-day.today{border:2px solid var(--accent)}
+.habit-check{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.habit-check.done{background:var(--accent3);border-color:var(--accent3)}
+
+/* ── STATS ── */
+.stat-big-card{background:var(--card);border-radius:var(--radius);padding:18px;border:1px solid var(--border);margin-bottom:12px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.stat-row:last-child{border-bottom:none}
+.stat-row-label{font-size:14px;color:var(--text2)}
+.stat-row-val{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+
+/* ── AI COACH ── */
+.ai-chat{display:flex;flex-direction:column;gap:12px;padding:16px}
+.ai-msg{max-width:80%;padding:14px;border-radius:var(--radius);font-size:14px;line-height:1.5}
+.ai-msg.bot{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;align-self:flex-start}
+.ai-msg.user{background:var(--accent);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.ai-input-wrap{position:sticky;bottom:calc(var(--nav-h));background:var(--bg);padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:10px}
+.ai-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:10px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none}
+.ai-send{width:40px;height:40px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+
+/* ── SLEEP ── */
+.sleep-ring-wrap{display:flex;justify-content:center;padding:20px 0}
+.sleep-stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.sleep-stat{text-align:center;padding:12px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.sleep-stat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent)}
+.sleep-stat-label{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* ── BODY MAP ── */
+.body-map-wrap{display:flex;justify-content:center;padding:10px}
+.body-svg{width:200px;height:300px}
+.muscle-label{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.muscle-dot{width:10px;height:10px;border-radius:50%}
+.muscle-name{font-size:13px;flex:1}
+.muscle-date{font-size:11px;color:var(--text3)}
+
+/* ── BATTLE PASS ── */
+.bp-level-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.bp-level-row::-webkit-scrollbar{display:none}
+.bp-level{min-width:54px;height:54px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex-shrink:0;position:relative}
+.bp-level.unlocked{border-color:var(--accent);background:rgba(108,99,255,.15)}
+.bp-level.current{border-color:var(--gold);background:rgba(255,215,0,.1)}
+.bp-level-num{font-size:10px;color:var(--text3)}
+.bp-level-reward{font-size:18px}
+.bp-level.locked{opacity:.4}
+.bp-progress-wrap{margin-top:12px}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--accent);color:#fff;padding:12px 22px;border-radius:30px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:.3s;white-space:nowrap;pointer-events:none;box-shadow:0 8px 30px rgba(108,99,255,.4)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:flex-end}
+.modal-overlay.show{display:flex}
+.modal-sheet{background:var(--bg2);border-radius:24px 24px 0 0;padding:24px;width:100%;max-height:85vh;overflow-y:auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:16px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.form-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none}
+.form-input:focus{border-color:var(--accent)}
+select.form-input option{background:var(--bg2)}
+
+/* ── CHART SIMPLE ── */
+.mini-chart{width:100%;height:60px;display:flex;align-items:flex-end;gap:3px;padding-top:8px}
+.chart-bar{flex:1;background:var(--accent);border-radius:3px 3px 0 0;opacity:.7;transition:height .5s ease}
+.chart-bar.today{opacity:1;background:linear-gradient(var(--accent),var(--accent2))}
+.chart-labels{display:flex;justify-content:space-around;margin-top:4px}
+.chart-label{font-size:10px;color:var(--text3);flex:1;text-align:center}
+
+/* ── LANDSCAPE ── */
+@media (orientation:landscape) and (max-height:500px){
+  :root{--nav-h:56px;--header-h:50px}
+  .bottom-nav{padding:0 20px}
+  .nav-label{display:none}
+  .nav-item svg{width:20px;height:20px}
+  .hero{padding:16px}
+  .hero-name{font-size:20px}
+  .scroll-pad{padding:10px 16px 0}
+  .stats-grid{grid-template-columns:1fr 1fr 1fr 1fr}
+}
+
+/* ── TABLET ── */
+@media (min-width:768px){
+  .stats-grid{grid-template-columns:repeat(4,1fr)}
+  .char-stats{grid-template-columns:repeat(4,1fr)}
+  .sleep-stats-row{grid-template-columns:repeat(4,1fr)}
+  .scroll-pad{padding:20px 24px 0}
+  .bottom-nav{padding:0 60px}
+}
+
+/* ── MICRO ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-in{animation:fadeIn .4s ease forwards}
+.ai-thinking{display:inline-block;width:8px;height:8px;background:var(--text3);border-radius:50%;animation:pulse .8s infinite}
+.badge-anim{animation:pulse .6s ease 2}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:0;height:0}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-logo">⚡ LifeForge</div>
+    <div class="header-right">
+      <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('ko')">한국어</button>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+  <div id="screen-home" class="screen active">
+    <div class="scroll-pad">
+      <!-- HERO -->
+      <div class="hero fade-in">
+        <div class="hero-greeting" data-t="greeting">Добро пожаловать,</div>
+        <div class="hero-name">⚡ Alex</div>
+        <div class="hero-level">
+          <span>🏅</span>
+          <span id="rank-label">Атлет</span>
+          &nbsp;•&nbsp;
+          <span data-t="level">Уровень</span> <span id="hero-level-num">12</span>
+        </div>
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-label">
+            <span>XP: <b id="cur-xp">2450</b></span>
+            <span id="next-xp">3000 XP → <span data-t="level">Уровень</span> 13</span>
+          </div>
+          <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:82%"></div></div>
+        </div>
+      </div>
+
+      <!-- LIFE INDEX -->
+      <div class="section-title" data-t="lifeIndex">🌟 Индекс Жизни</div>
+      <div class="card" style="animation-delay:.1s" class="fade-in">
+        <div class="life-index-wrap">
+          <div class="life-ring">
+            <svg width="90" height="90" viewBox="0 0 90 90">
+              <circle cx="45" cy="45" r="38" fill="none" stroke="var(--bg3)" stroke-width="7"/>
+              <circle cx="45" cy="45" r="38" fill="none" stroke="url(#lifeGrad)" stroke-width="7" stroke-linecap="round" stroke-dasharray="238.76" stroke-dashoffset="36" id="life-circle"/>
+              <defs>
+                <linearGradient id="lifeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#6c63ff"/>
+                  <stop offset="100%" stop-color="#43e97b"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="life-ring-num">85<span>/ 100</span></div>
+          </div>
+          <div class="life-bars">
+            <div class="life-bar-item">
+              <div class="life-bar-row"><span>🏋️ <span data-t="sport">Спорт</span></span><span>90</span></div>
+              <div class="life-bar-bg"><div class="life-bar-fill" style="width:90%;background:var(--accent)"></div></div>
+            </div>
+            <div class="life-bar-item">
+              <div class="life-bar-row"><span>😴 <span data-t="sleep">Сон</span></span><span>80</span></div>
+              <div class="life-bar-bg"><div class="life-bar-fill" style="width:80%;background:#7c3aed"></div></div>
+            </div>
+            <div class="life-bar-item">
+              <div class="life-bar-row"><span>🥗 <span data-t="nutrition">Питание</span></span><span>75</span></div>
+              <div class="life-bar-bg"><div class="life-bar-fill" style="width:75%;background:var(--accent3)"></div></div>
+            </div>
+            <div class="life-bar-item">
+              <div class="life-bar-row"><span>🎯 <span data-t="discipline">Дисциплина</span></span><span>95</span></div>
+              <div class="life-bar-bg"><div class="life-bar-fill" style="width:95%;background:var(--accent4)"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK STATS -->
+      <div class="section-title" data-t="today">Сегодня</div>
+      <div class="stats-grid">
+        <div class="stat-card purple">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-val" style="color:var(--accent)">7</div>
+          <div class="stat-label" data-t="streak">Серия дней</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-val" style="color:var(--accent2)">+150</div>
+          <div class="stat-label" data-t="xpToday">XP сегодня</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">🍎</div>
+          <div class="stat-val" style="color:var(--accent3)">2,340</div>
+          <div class="stat-label" data-t="calories">Калории</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon">💧</div>
+          <div class="stat-val" style="color:var(--accent4)">1.4л</div>
+          <div class="stat-label" data-t="water">Вода</div>
+        </div>
+      </div>
+
+      <!-- DAILY PROGRESS -->
+      <div class="section-title" data-t="dailyProgress">Прогресс дня</div>
+      <div class="card">
+        <div class="progress-item">
+          <div class="progress-icon" style="background:rgba(108,99,255,.15)">🏋️</div>
+          <div class="progress-info">
+            <div class="progress-name" data-t="workout">Тренировка</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:65%;background:var(--accent)"></div></div>
+          </div>
+          <div class="progress-pct">65%</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-icon" style="background:rgba(67,233,123,.15)">🥗</div>
+          <div class="progress-info">
+            <div class="progress-name" data-t="nutrition">Питание</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:78%;background:var(--accent3)"></div></div>
+          </div>
+          <div class="progress-pct">78%</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-icon" style="background:rgba(247,151,30,.15)">🎯</div>
+          <div class="progress-info">
+            <div class="progress-name" data-t="tasks">Задачи</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:40%;background:var(--accent4)"></div></div>
+          </div>
+          <div class="progress-pct">40%</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-icon" style="background:rgba(124,58,237,.15)">😴</div>
+          <div class="progress-info">
+            <div class="progress-name" data-t="sleep">Сон</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:87%;background:#7c3aed"></div></div>
+          </div>
+          <div class="progress-pct">87%</div>
+        </div>
+      </div>
+
+      <!-- MISSION OF THE DAY -->
+      <div class="section-title" data-t="missionDay">🎮 Миссия Дня</div>
+      <div class="card">
+        <div class="task-item" onclick="completeTask(this,50)">
+          <div class="task-check">✓</div>
+          <div class="task-info">
+            <div class="task-text" data-t="missionWorkout">Выполнить тренировку</div>
+            <div class="task-meta">🏋️</div>
+          </div>
+          <div class="task-xp">+50 XP</div>
+        </div>
+        <div class="task-item" onclick="completeTask(this,30)">
+          <div class="task-check"></div>
+          <div class="task-info">
+            <div class="task-text" data-t="missionWater">Выпить 2л воды</div>
+            <div class="task-meta">💧</div>
+          </div>
+          <div class="task-xp">+30 XP</div>
+        </div>
+        <div class="task-item" onclick="completeTask(this,40)">
+          <div class="task-check"></div>
+          <div class="task-info">
+            <div class="task-text" data-t="missionSteps">Пройти 10 000 шагов</div>
+            <div class="task-meta">🚶</div>
+          </div>
+          <div class="task-xp">+40 XP</div>
+        </div>
+        <div class="task-item" onclick="completeTask(this,20)">
+          <div class="task-check"></div>
+          <div class="task-info">
+            <div class="task-text" data-t="missionRead">Прочитать 20 страниц</div>
+            <div class="task-meta">📚</div>
+          </div>
+          <div class="task-xp">+20 XP</div>
+        </div>
+        <div class="task-item" onclick="completeTask(this,25)">
+          <div class="task-check"></div>
+          <div class="task-info">
+            <div class="task-text" data-t="missionSleep">Лечь до 23:00</div>
+            <div class="task-meta">😴</div>
+          </div>
+          <div class="task-xp">+25 XP</div>
+        </div>
+      </div>
+
+      <!-- AI DAILY REPORT -->
+      <div class="section-title">🤖 AI <span data-t="aiReport">Отчёт</span></div>
+      <div class="card" style="border-left:3px solid var(--accent)">
+        <div style="font-size:13px;line-height:1.7;color:var(--text2)" id="ai-report-text">
+          <span data-t="aiReportText">Сегодня ты выполнил 82% плана. Не хватает 35г белка и 2400 шагов. Тренировка прошла отлично! Рекомендую сегодня лечь не позже 22:30.</span>
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+    </div>
+  </div>
+
+  <!-- WORKOUTS SCREEN -->
+  <div id="screen-workout" class="screen">
+    <div class="scroll-pad">
+      <div class="section-title" data-t="myWorkouts">Мои тренировки</div>
+      <button class="btn btn-primary btn-full" onclick="showModal('modal-new-workout')" style="margin-bottom:14px">
+        ＋ <span data-t="createWorkout">Создать тренировку</span>
+      </button>
+
+      <div class="workout-card" onclick="startWorkout()">
+        <div class="workout-header">
+          <div>
+            <div class="workout-title" data-t="pushDay">День груди и трицепса</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:3px">6 <span data-t="exercises">упражнений</span> • 45 <span data-t="min">мин</span></div>
+          </div>
+          <div class="workout-badge" style="background:rgba(108,99,255,.15);color:var(--accent)" data-t="strength">Сила</div>
+        </div>
+        <div class="exercise-row">
+          <div class="ex-icon">🏋️</div>
+          <div class="ex-info">
+            <div class="ex-name" data-t="benchPress">Жим лёжа</div>
+            <div class="ex-sets">4×8 • 80кг</div>
+          </div>
+          <div class="ex-pr">PR: 100кг</div>
+        </div>
+        <div class="exercise-row">
+          <div class="ex-icon">💪</div>
+          <div class="ex-info">
+            <div class="ex-name" data-t="inclinePress">Наклонный жим</div>
+            <div class="ex-sets">3×10 • 60кг</div>
+          </div>
+          <div class="ex-pr">PR: 75кг</div>
+        </div>
+        <div class="exercise-row">
+          <div class="ex-icon">🔱</div>
+          <div class="ex-info">
+            <div class="ex-name" data-t="tricepsDips">Отжимания на брусьях</div>
+            <div class="ex-sets">3×12</div>
+          </div>
+          <div class="ex-pr">PR: +20кг</div>
+        </div>
+      </div>
+
+      <div class="workout-card">
+        <div class="workout-header">
+          <div>
+            <div class="workout-title" data-t="pullDay">День спины и бицепса</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:3px">5 <span data-t="exercises">упражнений</span> • 40 <span data-t="min">мин</span></div>
+          </div>
+          <div class="workout-badge" style="background:rgba(67,233,123,.15);color:var(--accent3)" data-t="strength">Сила</div>
+        </div>
+        <div class="exercise-row">
+          <div class="ex-icon">🏊</div>
+          <div class="ex-info">
+            <div class="ex-name" data-t="pullups">Подтягивания</div>
+            <div class="ex-sets">4×8 • +15кг</div>
+          </div>
+          <div class="ex-pr">PR: +25кг</div>
+        </div>
+        <div class="exercise-row">
+          <div class="ex-icon">🎣</div>
+          <div class="ex-info">
+            <div class="ex-name" data-t="deadlift">Становая тяга</div>
+            <div class="ex-sets">3×5 • 120кг</div>
+          </div>
+          <div class="ex-pr">PR: 140кг</div>
+        </div>
+      </div>
+
+      <!-- BODY MAP -->
+      <div class="section-title" data-t="bodyMap">🗺️ Карта мышц</div>
+      <div class="card">
+        <div class="body-map-wrap">
+          <svg class="body-svg" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+            <!-- Head -->
+            <circle cx="50" cy="12" r="10" fill="var(--card2)" stroke="var(--border)" stroke-width="1.5"/>
+            <!-- Neck -->
+            <rect x="46" y="21" width="8" height="6" rx="2" fill="var(--card2)" stroke="var(--border)" stroke-width="1"/>
+            <!-- Torso -->
+            <rect x="33" y="27" width="34" height="38" rx="5" fill="#2d1a4e" stroke="var(--accent)" stroke-width="1.5" opacity=".8"/>
+            <!-- Chest label -->
+            <text x="50" y="48" text-anchor="middle" font-size="6" fill="var(--accent)" font-weight="bold">CHEST</text>
+            <!-- Left arm upper -->
+            <rect x="18" y="27" width="13" height="28" rx="4" fill="var(--card2)" stroke="var(--border)" stroke-width="1"/>
+            <!-- Right arm upper -->
+            <rect x="69" y="27" width="13" height="28" rx="4" fill="#1a3a1a" stroke="var(--accent3)" stroke-width="1.5" opacity=".9"/>
+            <!-- Bicep label -->
+            <text x="75" y="43" text-anchor="middle" font-size="5" fill="var(--accent3)">BIC</text>
+            <!-- Left arm lower -->
+            <rect x="19" y="57" width="11" height="22" rx="3" fill="var(--card2)" stroke="var(--border)" stroke-width="1"/>
+            <!-- Right arm lower -->
+            <rect x="70" y="57" width="11" height="22" rx="3" fill="var(--card2)" stroke="var(--border)" stroke-width="1"/>
+            <!-- Abs -->
+            <rect x="37" y="67" width="26" height="22" rx="4" fill="var(--card2)" stroke="var(--border)" stroke-width="1"/>
+            <!-- Left leg upper -->
+            <rect x="33" y="91" width="15" height="35" rx="5" fill="#3a1a1a" stroke="var(--accent2)" stroke-width="1.5" opacity=".9"/>
+            <!-- Right leg upper -->
+            <rect x="52" y="91" width="15" height="35" rx="5" fill="#3a1a1a" stroke="var(--accent2)" stroke-width="1.5" opacity=".9"/>
+            <!-- Leg label -->
+            <text x="41" y="112" text-anchor="middle" font-size="5" fill="var(--accent2)">LEG</text>
+            <text x="59" y="112" text-anchor="middle" font-size="5" fill="var(--accent2)">LEG</text>
+            <!-- Left leg lower -->
+            <rect x="34" y="128" width="13" height="25" rx="4" fill="var(--card2)" stroke="var(--border)" stroke-width="1"/>
+            <!-- Right leg lower -->
+            <rect x="53" y="128" width="13" height="25" rx="4" fill="var(--card2)" stroke="var(--border)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="muscle-label">
+          <div class="muscle-dot" style="background:var(--accent)"></div>
+          <div class="muscle-name" data-t="chest">Грудь</div>
+          <div class="muscle-date" data-t="today">Сегодня</div>
+        </div>
+        <div class="muscle-label">
+          <div class="muscle-dot" style="background:var(--accent3)"></div>
+          <div class="muscle-name" data-t="bicep">Бицепс</div>
+          <div class="muscle-date" data-t="yesterday">Вчера</div>
+        </div>
+        <div class="muscle-label">
+          <div class="muscle-dot" style="background:var(--accent2)"></div>
+          <div class="muscle-name" data-t="legs">Ноги</div>
+          <div class="muscle-date">2 <span data-t="daysAgo">дня назад</span></div>
+        </div>
+        <div class="muscle-label">
+          <div class="muscle-dot" style="background:var(--text3)"></div>
+          <div class="muscle-name" data-t="back">Спина</div>
+          <div class="muscle-date" style="color:var(--accent2)">5 <span data-t="daysAgo">дней назад</span> ⚠️</div>
+        </div>
+      </div>
+
+      <!-- STRENGTH CHART -->
+      <div class="section-title" data-t="strengthChart">📈 График силы</div>
+      <div class="card">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:8px" data-t="benchPressKg">Жим лёжа (кг)</div>
+        <div class="mini-chart" id="strength-chart"></div>
+        <div class="chart-labels">
+          <span class="chart-label">Пн</span><span class="chart-label">Вт</span><span class="chart-label">Ср</span>
+          <span class="chart-label">Чт</span><span class="chart-label">Пт</span><span class="chart-label">Сб</span>
+          <span class="chart-label today-label" data-t="today2">Сег</span>
+        </div>
+      </div>
+      <div style="height:20px"></div>
+    </div>
+  </div>
+
+  <!-- NUTRITION SCREEN -->
+  <div id="screen-nutrition" class="screen">
+    <div class="scroll-pad">
+      <div class="section-title" data-t="todayNutrition">🥗 Питание сегодня</div>
+
+      <!-- CALORIES RING -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--accent3)">2,340</div>
+            <div style="font-size:12px;color:var(--text3)"><span data-t="of">из</span> 3,000 <span data-t="kcal">ккал</span></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:13px;color:var(--accent2)">🔥 <span data-t="burned">Сожжено</span>: 420 <span data-t="kcal">ккал</span></div>
+            <div style="font-size:13px;color:var(--accent3);margin-top:4px">⬆️ <span data-t="intake">Потреблено</span>: 2340 <span data-t="kcal">ккал</span></div>
+            <div style="font-size:13px;color:var(--accent4);margin-top:4px">💧 <span data-t="water">Вода</span>: 1.4 / 2.0 <span data-t="liters">л</span></div>
+          </div>
+        </div>
+        <div class="progress-bar" style="height:8px;border-radius:4px;overflow:hidden;background:var(--bg3)">
+          <div class="progress-fill" style="width:78%;background:linear-gradient(90deg,var(--accent3),var(--accent4));height:100%;border-radius:4px"></div>
+        </div>
+      </div>
+
+      <!-- MACROS -->
+      <div class="section-title" data-t="macros">БЖУ</div>
+      <div class="card">
+        <div class="macro-ring-wrap">
+          <div class="macro-item">
+            <div class="macro-circle" style="border-color:var(--accent2);color:var(--accent2)">78%</div>
+            <div class="macro-label" data-t="protein">Белок</div>
+            <div class="macro-g">156г</div>
+          </div>
+          <div class="macro-item">
+            <div class="macro-circle" style="border-color:var(--accent4);color:var(--accent4)">85%</div>
+            <div class="macro-label" data-t="fat">Жиры</div>
+            <div class="macro-g">68г</div>
+          </div>
+          <div class="macro-item">
+            <div class="macro-circle" style="border-color:var(--accent);color:var(--accent)">72%</div>
+            <div class="macro-label" data-t="carbs">Углеводы</div>
+            <div class="macro-g">245г</div>
+          </div>
+          <div class="macro-item">
+            <div class="macro-circle" style="border-color:#7c3aed;color:#7c3aed">70%</div>
+            <div class="macro-label" data-t="water">Вода</div>
+            <div class="macro-g">1.4л</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEAL PLAN -->
+      <div class="section-title" data-t="mealPlan">📋 Меню</div>
+
+      <div class="meal-card">
+        <div class="meal-header">
+          <div class="meal-name">🌅 <span data-t="breakfast">Завтрак</span></div>
+          <div class="meal-cal">680 <span data-t="kcal">ккал</span></div>
+        </div>
+        <div class="meal-item"><span data-t="oatmeal">Овсянка</span><span style="color:var(--text3)">100г • 350ккал</span></div>
+        <div class="meal-item"><span data-t="eggs">Яйца</span><span style="color:var(--text3)">3шт • 210ккал</span></div>
+        <div class="meal-item"><span data-t="banana">Банан</span><span style="color:var(--text3)">1шт • 120ккал</span></div>
+      </div>
+
+      <div class="meal-card">
+        <div class="meal-header">
+          <div class="meal-name">☀️ <span data-t="lunch">Обед</span></div>
+          <div class="meal-cal">920 <span data-t="kcal">ккал</span></div>
+        </div>
+        <div class="meal-item"><span data-t="chickenBreast">Куриная грудка</span><span style="color:var(--text3)">200г • 330ккал</span></div>
+        <div class="meal-item"><span data-t="rice">Рис</span><span style="color:var(--text3)">150г • 200ккал</span></div>
+        <div class="meal-item"><span data-t="salad">Салат</span><span style="color:var(--text3)">200г • 80ккал</span></div>
+        <div class="meal-item"><span data-t="oliveoil">Оливковое масло</span><span style="color:var(--text3)">15мл • 135ккал</span></div>
+      </div>
+
+      <div class="meal-card">
+        <div class="meal-header">
+          <div class="meal-name">🌙 <span data-t="dinner">Ужин</span></div>
+          <div class="meal-cal">740 <span data-t="kcal">ккал</span></div>
+        </div>
+        <div class="meal-item"><span data-t="salmon">Лосось</span><span style="color:var(--text3)">180г • 380ккал</span></div>
+        <div class="meal-item"><span data-t="sweetpotato">Сладкий картофель</span><span style="color:var(--text3)">200г • 180ккал</span></div>
+        <div class="meal-item"><span data-t="broccoli">Брокколи</span><span style="color:var(--text3)">150г • 50ккал</span></div>
+      </div>
+
+      <div class="meal-card">
+        <div class="meal-header">
+          <div class="meal-name">🥜 <span data-t="snacks">Перекусы</span></div>
+          <div class="meal-cal">400 <span data-t="kcal">ккал</span></div>
+        </div>
+        <div class="meal-item"><span data-t="protein_shake">Протеиновый коктейль</span><span style="color:var(--text3)">250мл • 250ккал</span></div>
+        <div class="meal-item"><span data-t="almonds">Миндаль</span><span style="color:var(--text3)">30г • 170ккал</span></div>
+      </div>
+
+      <button class="btn btn-outline btn-full" style="margin-top:4px" onclick="showToast('🍽️ ' + T('menuGenerated'))">
+        🤖 <span data-t="generateMenu">Сгенерировать меню</span>
+      </button>
+      <div style="height:20px"></div>
+    </div>
+  </div>
+
+  <!-- TASKS & HABITS SCREEN -->
+  <div id="screen-tasks" class="screen">
+    <div class="scroll-pad">
+      <!-- TABS -->
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button class="btn btn-primary" id="tab-tasks" onclick="switchTab('tasks')" style="flex:1;padding:10px"><span data-t="tasks">Задачи</span></button>
+        <button class="btn btn-outline" id="tab-habits" onclick="switchTab('habits')" style="flex:1;padding:10px"><span data-t="habits">Привычки</span></button>
+      </div>
+
+      <div id="tasks-content">
+        <button class="btn btn-primary btn-full" onclick="showModal('modal-new-task')" style="margin-bottom:14px">
+          ＋ <span data-t="addTask">Добавить задачу</span>
+        </button>
+
+        <div class="section-title" data-t="highPriority">Высокий приоритет</div>
+        <div class="task-item" onclick="completeTask(this,80)">
+          <div class="task-check"></div>
+          <div class="priority-dot" style="background:var(--accent2)"></div>
+          <div class="task-info">
+            <div class="task-text" data-t="task1">Подготовить презентацию</div>
+            <div class="task-meta">💼 · 18:00 · <span data-t="work">Работа</span></div>
+          </div>
+          <div class="task-xp">+80 XP</div>
+        </div>
+        <div class="task-item done" onclick="completeTask(this,50)">
+          <div class="task-check">✓</div>
+          <div class="priority-dot" style="background:var(--accent2)"></div>
+          <div class="task-info">
+            <div class="task-text" data-t="task2">Утренняя тренировка</div>
+            <div class="task-meta">🏋️ · <span data-t="sport">Спорт</span></div>
+          </div>
+          <div class="task-xp">+50 XP</div>
+        </div>
+
+        <div class="section-title" data-t="mediumPriority">Средний приоритет</div>
+        <div class="task-item" onclick="completeTask(this,30)">
+          <div class="task-check"></div>
+          <div class="priority-dot" style="background:var(--accent4)"></div>
+          <div class="task-info">
+            <div class="task-text" data-t="task3">Прочитать главу книги</div>
+            <div class="task-meta">📚 · <span data-t="education">Обучение</span></div>
+          </div>
+          <div class="task-xp">+30 XP</div>
+        </div>
+        <div class="task-item" onclick="completeTask(this,25)">
+          <div class="task-check"></div>
+          <div class="priority-dot" style="background:var(--accent4)"></div>
+          <div class="task-info">
+            <div class="task-text" data-t="task4">Медитация 10 минут</div>
+            <div class="task-meta">🧘 · <span data-t="health">Здоровье</span></div>
+          </div>
+          <div class="task-xp">+25 XP</div>
+        </div>
+        <div class="task-item" onclick="completeTask(this,20)">
+          <div class="task-check"></div>
+          <div class="priority-dot" style="background:var(--accent3)"></div>
+          <div class="task-info">
+            <div class="task-text" data-t="task5">Выпить витамины</div>
+            <div class="task-meta">💊 · <span data-t="health">Здоровье</span></div>
+          </div>
+          <div class="task-xp">+20 XP</div>
+        </div>
+      </div>
+
+      <div id="habits-content" style="display:none">
+        <button class="btn btn-primary btn-full" onclick="showToast('✅ ' + T('habitAdded'))" style="margin-bottom:14px">
+          ＋ <span data-t="addHabit">Добавить привычку</span>
+        </button>
+
+        <div class="habit-row">
+          <div class="habit-icon" style="background:rgba(108,99,255,.15)">🏋️</div>
+          <div class="habit-info">
+            <div class="habit-name" data-t="habitWorkout">Тренировка</div>
+            <div class="habit-streak">🔥 14 <span data-t="dayStreak">дней подряд</span></div>
+            <div class="habit-days">
+              <div class="habit-day done">П</div><div class="habit-day done">В</div><div class="habit-day done">С</div>
+              <div class="habit-day done">Ч</div><div class="habit-day done">П</div><div class="habit-day done">С</div>
+              <div class="habit-day today">В</div>
+            </div>
+          </div>
+          <div class="habit-check done" onclick="toggleHabit(this)">✓</div>
+        </div>
+
+        <div class="habit-row">
+          <div class="habit-icon" style="background:rgba(67,233,123,.15)">📚</div>
+          <div class="habit-info">
+            <div class="habit-name" data-t="habitRead">Чтение</div>
+            <div class="habit-streak">🔥 7 <span data-t="dayStreak">дней подряд</span></div>
+            <div class="habit-days">
+              <div class="habit-day done">П</div><div class="habit-day done">В</div><div class="habit-day">С</div>
+              <div class="habit-day done">Ч</div><div class="habit-day done">П</div><div class="habit-day done">С</div>
+              <div class="habit-day today"></div>
+            </div>
+          </div>
+          <div class="habit-check" onclick="toggleHabit(this)"></div>
+        </div>
+
+        <div class="habit-row">
+          <div class="habit-icon" style="background:rgba(247,151,30,.15)">💧</div>
+          <div class="habit-info">
+            <div class="habit-name" data-t="habitWater">Вода 2л</div>
+            <div class="habit-streak">🔥 21 <span data-t="dayStreak">день подряд</span></div>
+            <div class="habit-days">
+              <div class="habit-day done">П</div><div class="habit-day done">В</div><div class="habit-day done">С</div>
+              <div class="habit-day done">Ч</div><div class="habit-day done">П</div><div class="habit-day done">С</div>
+              <div class="habit-day today"></div>
+            </div>
+          </div>
+          <div class="habit-check" onclick="toggleHabit(this)"></div>
+        </div>
+
+        <div class="habit-row">
+          <div class="habit-icon" style="background:rgba(255,101,132,.15)">🧘</div>
+          <div class="habit-info">
+            <div class="habit-name" data-t="habitMeditation">Медитация</div>
+            <div class="habit-streak">🔥 5 <span data-t="dayStreak">дней подряд</span></div>
+            <div class="habit-days">
+              <div class="habit-day">П</div><div class="habit-day done">В</div><div class="habit-day done">С</div>
+              <div class="habit-day done">Ч</div><div class="habit-day done">П</div><div class="habit-day done">С</div>
+              <div class="habit-day today"></div>
+            </div>
+          </div>
+          <div class="habit-check" onclick="toggleHabit(this)"></div>
+        </div>
+      </div>
+      <div style="height:20px"></div>
+    </div>
+  </div>
+
+  <!-- STATS & CHARACTER SCREEN -->
+  <div id="screen-stats" class="screen">
+    <div class="scroll-pad">
+      <!-- CHARACTER -->
+      <div class="section-title" data-t="myCharacter">⚔️ Мой персонаж</div>
+      <div class="card" style="margin-bottom:12px">
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-size:56px;line-height:1">🦸</div>
+          <div class="rank-badge" id="rank-badge" style="background:rgba(108,99,255,.15);color:var(--accent);margin:10px auto;display:inline-flex">
+            🏅 <span id="rank-name-display">Атлет</span>
+          </div>
+          <div style="font-size:13px;color:var(--text3)" data-t="characterDesc">Продолжай развиваться — стань Легендой!</div>
+        </div>
+        <div class="char-stats">
+          <div class="char-stat">
+            <div class="char-stat-header">
+              <div class="char-stat-name">💪 <span data-t="strength2">Сила</span></div>
+              <div class="char-stat-val" style="color:var(--accent2)">72</div>
+            </div>
+            <div class="char-stat-bar"><div class="char-stat-fill" style="width:72%;background:var(--accent2)"></div></div>
+          </div>
+          <div class="char-stat">
+            <div class="char-stat-header">
+              <div class="char-stat-name">🏃 <span data-t="endurance">Выносливость</span></div>
+              <div class="char-stat-val" style="color:var(--accent3)">65</div>
+            </div>
+            <div class="char-stat-bar"><div class="char-stat-fill" style="width:65%;background:var(--accent3)"></div></div>
+          </div>
+          <div class="char-stat">
+            <div class="char-stat-header">
+              <div class="char-stat-name">❤️ <span data-t="health2">Здоровье</span></div>
+              <div class="char-stat-val" style="color:var(--accent2)">80</div>
+            </div>
+            <div class="char-stat-bar"><div class="char-stat-fill" style="width:80%;background:var(--accent2)"></div></div>
+          </div>
+          <div class="char-stat">
+            <div class="char-stat-header">
+              <div class="char-stat-name">🎯 <span data-t="discipline2">Дисциплина</span></div>
+              <div class="char-stat-val" style="color:var(--accent4)">88</div>
+            </div>
+            <div class="char-stat-bar"><div class="char-stat-fill" style="width:88%;background:var(--accent4)"></div></div>
+          </div>
+          <div class="char-stat">
+            <div class="char-stat-header">
+              <div class="char-stat-name">🧠 <span data-t="intellect">Интеллект</span></div>
+              <div class="char-stat-val" style="color:var(--accent)">60</div>
+            </div>
+            <div class="char-stat-bar"><div class="char-stat-fill" style="width:60%;background:var(--accent)"></div></div>
+          </div>
+          <div class="char-stat">
+            <div class="char-stat-header">
+              <div class="char-stat-name">💰 <span data-t="finance">Финансы</span></div>
+              <div class="char-stat-val" style="color:var(--gold)">55</div>
+            </div>
+            <div class="char-stat-bar"><div class="char-stat-fill" style="width:55%;background:var(--gold)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COINS -->
+      <div class="card" style="background:linear-gradient(135deg,#1a1500,#2d2400);border-color:rgba(255,215,0,.2)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px;color:rgba(255,215,0,.7)" data-t="gameCoins">🪙 Игровые монеты</div>
+            <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--gold)">4,800</div>
+          </div>
+          <button class="btn" style="background:rgba(255,215,0,.15);color:var(--gold);border:1px solid rgba(255,215,0,.2)" onclick="showToast('🛒 ' + T('shopSoon'))">
+            🛍️ <span data-t="shop">Магазин</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SLEEP -->
+      <div class="section-title" data-t="sleep">😴 Сон</div>
+      <div class="card">
+        <div class="sleep-stats-row">
+          <div class="sleep-stat">
+            <div class="sleep-stat-val">7.5ч</div>
+            <div class="sleep-stat-label" data-t="lastNight">Прошлой ночью</div>
+          </div>
+          <div class="sleep-stat">
+            <div class="sleep-stat-val" style="color:var(--accent3)">7.2ч</div>
+            <div class="sleep-stat-label" data-t="weekAvg">Сред. неделя</div>
+          </div>
+          <div class="sleep-stat">
+            <div class="sleep-stat-val" style="color:var(--accent4)">85%</div>
+            <div class="sleep-stat-label" data-t="quality">Качество</div>
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="mini-chart" id="sleep-chart"></div>
+          <div class="chart-labels">
+            <span class="chart-label">Пн</span><span class="chart-label">Вт</span><span class="chart-label">Ср</span>
+            <span class="chart-label">Чт</span><span class="chart-label">Пт</span><span class="chart-label">Сб</span>
+            <span class="chart-label today-label">Вс</span>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:rgba(108,99,255,.1);border-radius:var(--radius-sm);font-size:13px;color:var(--text2)">
+          💡 <span data-t="sleepTip">Рекомендация: лечь до 22:30 для оптимального восстановления.</span>
+        </div>
+      </div>
+
+      <!-- GENERAL STATS -->
+      <div class="section-title" data-t="generalStats">📊 Общая статистика</div>
+      <div class="stat-big-card">
+        <div class="stat-row">
+          <div class="stat-row-label" data-t="totalWorkouts">Тренировок всего</div>
+          <div class="stat-row-val">148</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label" data-t="totalXP">Всего XP</div>
+          <div class="stat-row-val" style="color:var(--accent)">2,450</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label" data-t="currentWeight">Текущий вес</div>
+          <div class="stat-row-val">78 кг</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label" data-t="bodyFat">Процент жира</div>
+          <div class="stat-row-val">16%</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label" data-t="muscleMass">Мышечная масса</div>
+          <div class="stat-row-val" style="color:var(--accent3)">38 кг</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label" data-t="avgCalories">Средние калории</div>
+          <div class="stat-row-val">2,780 ккал</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label" data-t="maxStreak">Макс. серия</div>
+          <div class="stat-row-val" style="color:var(--accent4)">🔥 21 <span data-t="days">дн</span></div>
+        </div>
+      </div>
+
+      <!-- BATTLE PASS -->
+      <div class="section-title">🎮 <span data-t="battlePass">Боевой пропуск</span></div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:13px;color:var(--text2)" data-t="season">Сезон 1 · Путь Воина</div>
+          <div style="font-size:13px;font-weight:700;color:var(--gold)"><span data-t="level">Ур.</span> 23 / 100</div>
+        </div>
+        <div class="progress-bar" style="height:6px;margin-bottom:14px"><div class="progress-fill" style="width:23%;background:linear-gradient(90deg,var(--gold),var(--accent4))"></div></div>
+        <div class="bp-level-row" id="bp-levels"></div>
+      </div>
+      <div style="height:20px"></div>
+    </div>
+  </div>
+
+  <!-- AI COACH SCREEN -->
+  <div id="screen-ai" class="screen" style="display:none;flex-direction:column">
+    <div class="ai-chat" id="ai-chat-messages" style="flex:1;overflow-y:auto;padding-bottom:80px">
+      <div class="ai-msg bot" id="ai-welcome-msg">
+        👋 <span data-t="aiWelcome">Привет! Я твой AI-тренер. Я знаю твой вес (78кг), рост (182см), цель — набор массы. Сегодня ты выполнил 82% плана. Чем могу помочь?</span>
+      </div>
+    </div>
+    <div class="ai-input-wrap">
+      <input class="ai-input" id="ai-input" data-placeholder-t="aiAsk" placeholder="Спроси AI-тренера...">
+      <button class="ai-send" onclick="sendAI()">➤</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchScreen('home')" id="nav-home">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span class="nav-label" data-t="navHome">Главная</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('workout')" id="nav-workout">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>
+      <span class="nav-label" data-t="navWorkout">Тренировка</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('nutrition')" id="nav-nutrition">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05h-5V1h-1.97v4.05h-4.97l.3 2.34c1.71.47 3.31 1.32 4.27 2.26 1.44 1.42 2.43 2.89 2.43 5.29v8.05zM1 21.99V21h15.03v.99c0 .55-.45 1-1.01 1H2.01c-.56 0-1.01-.45-1.01-1zm15.03-7c0-8-15.03-8-15.03 0h15.03zM1.02 17h15v2H1z"/></svg>
+      <span class="nav-label" data-t="navNutrition">Питание</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('tasks')" id="nav-tasks">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      <span class="nav-label" data-t="navTasks">Задачи</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('stats')" id="nav-stats">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      <span class="nav-label" data-t="navStats">Статистика</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('ai')" id="nav-ai">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+      <span class="nav-label" data-t="navAI">AI</span>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-new-workout" onclick="closeModalOutside(event,'modal-new-workout')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" data-t="createWorkout">Создать тренировку</div>
+    <div class="form-group">
+      <div class="form-label" data-t="name">Название</div>
+      <input class="form-input" data-placeholder-t="workoutNamePlaceholder" placeholder="Например: Ноги — понедельник">
+    </div>
+    <div class="form-group">
+      <div class="form-label" data-t="type">Тип</div>
+      <select class="form-input">
+        <option data-t="strength">Сила</option>
+        <option data-t="cardio">Кардио</option>
+        <option data-t="stretching">Растяжка</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <div class="form-label" data-t="exercises">Упражнения</div>
+      <input class="form-input" data-placeholder-t="searchExercisePlaceholder" placeholder="Поиск упражнений...">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="closeModal('modal-new-workout');showToast('💪 ' + T('workoutCreated'))">
+      <span data-t="save">Сохранить</span>
+    </button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-new-task" onclick="closeModalOutside(event,'modal-new-task')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" data-t="addTask">Добавить задачу</div>
+    <div class="form-group">
+      <div class="form-label" data-t="task">Задача</div>
+      <input class="form-input" data-placeholder-t="taskPlaceholder" placeholder="Что нужно сделать?">
+    </div>
+    <div class="form-group">
+      <div class="form-label" data-t="category">Категория</div>
+      <select class="form-input">
+        <option data-t="work">Работа</option>
+        <option data-t="sport">Спорт</option>
+        <option data-t="education">Обучение</option>
+        <option data-t="health">Здоровье</option>
+        <option data-t="habits">Привычки</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <div class="form-label" data-t="priority">Приоритет</div>
+      <select class="form-input">
+        <option data-t="high">Высокий</option>
+        <option data-t="medium">Средний</option>
+        <option data-t="low">Низкий</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <div class="form-label" data-t="xpReward">XP-награда</div>
+      <input class="form-input" type="number" value="30">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="closeModal('modal-new-task');showToast('✅ ' + T('taskAdded'))">
+      <span data-t="save">Сохранить</span>
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── TRANSLATIONS ──
+const translations = {
+  ru: {
+    greeting:"Добро пожаловать,", level:"Уровень", lifeIndex:"🌟 Индекс Жизни",
+    today:"Сегодня", today2:"Сег", streak:"Серия дней", xpToday:"XP сегодня",
+    calories:"Калории", water:"Вода", dailyProgress:"Прогресс дня",
+    workout:"Тренировка", nutrition:"Питание", tasks:"Задачи", sleep:"Сон",
+    missionDay:"🎮 Миссия Дня", missionWorkout:"Выполнить тренировку",
+    missionWater:"Выпить 2л воды", missionSteps:"Пройти 10 000 шагов",
+    missionRead:"Прочитать 20 страниц", missionSleep:"Лечь до 23:00",
+    aiReport:"Отчёт", aiReportText:"Сегодня ты выполнил 82% плана. Не хватает 35г белка и 2400 шагов. Тренировка прошла отлично! Рекомендую сегодня лечь не позже 22:30.",
+    myWorkouts:"Мои тренировки", createWorkout:"Создать тренировку",
+    pushDay:"День груди и трицепса", pullDay:"День спины и бицепса",
+    exercises:"упражнений", min:"мин", strength:"Сила",
+    benchPress:"Жим лёжа", inclinePress:"Наклонный жим",
+    tricepsDips:"Отжимания на брусьях", pullups:"Подтягивания", deadlift:"Становая тяга",
+    bodyMap:"🗺️ Карта мышц", chest:"Грудь", bicep:"Бицепс", legs:"Ноги", back:"Спина",
+    yesterday:"Вчера", daysAgo:"дня назад",
+    strengthChart:"📈 График силы", benchPressKg:"Жим лёжа (кг)",
+    todayNutrition:"🥗 Питание сегодня", of:"из", kcal:"ккал",
+    burned:"Сожжено", intake:"Потреблено", liters:"л",
+    macros:"БЖУ", protein:"Белок", fat:"Жиры", carbs:"Углеводы",
+    mealPlan:"📋 Меню", breakfast:"Завтрак", lunch:"Обед", dinner:"Ужин",
+    snacks:"Перекусы", oatmeal:"Овсянка", eggs:"Яйца", banana:"Банан",
+    chickenBreast:"Куриная грудка", rice:"Рис", salad:"Салат", oliveoil:"Оливковое масло",
+    salmon:"Лосось", sweetpotato:"Сладкий картофель", broccoli:"Брокколи",
+    protein_shake:"Протеиновый коктейль", almonds:"Миндаль",
+    generateMenu:"Сгенерировать меню", menuGenerated:"Меню сгенерировано!",
+    addTask:"Добавить задачу", addHabit:"Добавить привычку",
+    highPriority:"Высокий приоритет", mediumPriority:"Средний приоритет",
+    task1:"Подготовить презентацию", task2:"Утренняя тренировка",
+    task3:"Прочитать главу книги", task4:"Медитация 10 минут",
+    task5:"Выпить витамины", work:"Работа", education:"Обучение", health:"Здоровье",
+    habits:"Привычки", sport:"Спорт",
+    habitWorkout:"Тренировка", habitRead:"Чтение",
+    habitWater:"Вода 2л", habitMeditation:"Медитация", dayStreak:"дней подряд",
+    myCharacter:"⚔️ Мой персонаж", characterDesc:"Продолжай развиваться — стань Легендой!",
+    strength2:"Сила", endurance:"Выносливость", health2:"Здоровье",
+    discipline:"Дисциплина", discipline2:"Дисциплина", intellect:"Интеллект", finance:"Финансы",
+    gameCoins:"🪙 Игровые монеты", shop:"Магазин", shopSoon:"Магазин скоро откроется!",
+    lastNight:"Прошлой ночью", weekAvg:"Сред. неделя", quality:"Качество",
+    sleepTip:"Рекомендация: лечь до 22:30 для оптимального восстановления.",
+    generalStats:"📊 Общая статистика", totalWorkouts:"Тренировок всего",
+    totalXP:"Всего XP", currentWeight:"Текущий вес", bodyFat:"Процент жира",
+    muscleMass:"Мышечная масса", avgCalories:"Средние калории",
+    maxStreak:"Макс. серия", days:"дн",
+    battlePass:"Боевой пропуск", season:"Сезон 1 · Путь Воина",
+    aiWelcome:"Привет! Я твой AI-тренер. Я знаю твой вес (78кг), рост (182см), цель — набор массы. Сегодня ты выполнил 82% плана. Чем могу помочь?",
+    aiAsk:"Спроси AI-тренера...",
+    navHome:"Главная", navWorkout:"Трен.", navNutrition:"Питание",
+    navTasks:"Задачи", navStats:"Статы", navAI:"AI",
+    name:"Название", type:"Тип", category:"Категория", priority:"Приоритет",
+    high:"Высокий", medium:"Средний", low:"Низкий", task:"Задача",
+    xpReward:"XP-награда", save:"Сохранить", cardio:"Кардио", stretching:"Растяжка",
+    workoutNamePlaceholder:"Например: Ноги — понедельник",
+    searchExercisePlaceholder:"Поиск упражнений...", taskPlaceholder:"Что нужно сделать?",
+    workoutCreated:"Тренировка создана!", taskAdded:"Задача добавлена!", habitAdded:"Привычка добавлена!",
+    ranks:["Новичок","Атлет","Воин","Чемпион","Легенда","Титан"],
+    workoutStarted:"Тренировка начата! 💪",
+  },
+  en: {
+    greeting:"Welcome,", level:"Level", lifeIndex:"🌟 Life Index",
+    today:"Today", today2:"Today", streak:"Day streak", xpToday:"XP today",
+    calories:"Calories", water:"Water", dailyProgress:"Daily Progress",
+    workout:"Workout", nutrition:"Nutrition", tasks:"Tasks", sleep:"Sleep",
+    missionDay:"🎮 Daily Mission", missionWorkout:"Complete a workout",
+    missionWater:"Drink 2L of water", missionSteps:"Walk 10,000 steps",
+    missionRead:"Read 20 pages", missionSleep:"Sleep before 11 PM",
+    aiReport:"Report", aiReportText:"Today you completed 82% of your plan. You're missing 35g protein and 2,400 steps. Great workout! I recommend going to bed by 10:30 PM.",
+    myWorkouts:"My Workouts", createWorkout:"Create Workout",
+    pushDay:"Chest & Triceps Day", pullDay:"Back & Biceps Day",
+    exercises:"exercises", min:"min", strength:"Strength",
+    benchPress:"Bench Press", inclinePress:"Incline Press",
+    tricepsDips:"Tricep Dips", pullups:"Pull-ups", deadlift:"Deadlift",
+    bodyMap:"🗺️ Muscle Map", chest:"Chest", bicep:"Biceps", legs:"Legs", back:"Back",
+    yesterday:"Yesterday", daysAgo:"days ago",
+    strengthChart:"📈 Strength Chart", benchPressKg:"Bench Press (kg)",
+    todayNutrition:"🥗 Today's Nutrition", of:"of", kcal:"kcal",
+    burned:"Burned", intake:"Intake", liters:"L",
+    macros:"Macros", protein:"Protein", fat:"Fat", carbs:"Carbs",
+    mealPlan:"📋 Meal Plan", breakfast:"Breakfast", lunch:"Lunch", dinner:"Dinner",
+    snacks:"Snacks", oatmeal:"Oatmeal", eggs:"Eggs", banana:"Banana",
+    chickenBreast:"Chicken Breast", rice:"Rice", salad:"Salad", oliveoil:"Olive Oil",
+    salmon:"Salmon", sweetpotato:"Sweet Potato", broccoli:"Broccoli",
+    protein_shake:"Protein Shake", almonds:"Almonds",
+    generateMenu:"Generate Menu", menuGenerated:"Menu generated!",
+    addTask:"Add Task", addHabit:"Add Habit",
+    highPriority:"High Priority", mediumPriority:"Medium Priority",
+    task1:"Prepare presentation", task2:"Morning workout",
+    task3:"Read a book chapter", task4:"Meditate 10 minutes",
+    task5:"Take vitamins", work:"Work", education:"Education", health:"Health",
+    habits:"Habits", sport:"Sport",
+    habitWorkout:"Workout", habitRead:"Reading",
+    habitWater:"Water 2L", habitMeditation:"Meditation", dayStreak:"day streak",
+    myCharacter:"⚔️ My Character", characterDesc:"Keep growing — become a Legend!",
+    strength2:"Strength", endurance:"Endurance", health2:"Health",
+    discipline:"Discipline", discipline2:"Discipline", intellect:"Intellect", finance:"Finance",
+    gameCoins:"🪙 Game Coins", shop:"Shop", shopSoon:"Shop coming soon!",
+    lastNight:"Last night", weekAvg:"Week avg", quality:"Quality",
+    sleepTip:"Tip: Go to bed by 10:30 PM for optimal recovery.",
+    generalStats:"📊 General Stats", totalWorkouts:"Total Workouts",
+    totalXP:"Total XP", currentWeight:"Current Weight", bodyFat:"Body Fat",
+    muscleMass:"Muscle Mass", avgCalories:"Avg. Calories",
+    maxStreak:"Max Streak", days:"d",
+    battlePass:"Battle Pass", season:"Season 1 · Warrior's Path",
+    aiWelcome:"Hey! I'm your AI coach. I know your weight (78kg), height (182cm), goal — muscle gain. Today you completed 82% of your plan. How can I help?",
+    aiAsk:"Ask your AI coach...",
+    navHome:"Home", navWorkout:"Train", navNutrition:"Nutrition",
+    navTasks:"Tasks", navStats:"Stats", navAI:"AI",
+    name:"Name", type:"Type", category:"Category", priority:"Priority",
+    high:"High", medium:"Medium", low:"Low", task:"Task",
+    xpReward:"XP Reward", save:"Save", cardio:"Cardio", stretching:"Stretching",
+    workoutNamePlaceholder:"e.g. Legs — Monday",
+    searchExercisePlaceholder:"Search exercises...", taskPlaceholder:"What needs to be done?",
+    workoutCreated:"Workout created!", taskAdded:"Task added!", habitAdded:"Habit added!",
+    ranks:["Beginner","Athlete","Warrior","Champion","Legend","Titan"],
+    workoutStarted:"Workout started! 💪",
+  },
+  ko: {
+    greeting:"환영합니다,", level:"레벨", lifeIndex:"🌟 생활 지수",
+    today:"오늘", today2:"오늘", streak:"연속 일수", xpToday:"오늘 XP",
+    calories:"칼로리", water:"물", dailyProgress:"오늘의 진행 상황",
+    workout:"운동", nutrition:"영양", tasks:"할 일", sleep:"수면",
+    missionDay:"🎮 오늘의 미션", missionWorkout:"운동 완료하기",
+    missionWater:"물 2L 마시기", missionSteps:"10,000보 걷기",
+    missionRead:"책 20페이지 읽기", missionSleep:"밤 11시 전에 취침",
+    aiReport:"보고서", aiReportText:"오늘 계획의 82%를 완료했습니다. 단백질 35g과 2,400걸음이 부족합니다. 운동 잘 하셨어요! 오늘 22시 30분까지 취침을 권장합니다.",
+    myWorkouts:"내 운동", createWorkout:"운동 만들기",
+    pushDay:"가슴 & 삼두근 날", pullDay:"등 & 이두근 날",
+    exercises:"운동", min:"분", strength:"힘",
+    benchPress:"벤치 프레스", inclinePress:"인클라인 프레스",
+    tricepsDips:"딥스", pullups:"풀업", deadlift:"데드리프트",
+    bodyMap:"🗺️ 근육 지도", chest:"가슴", bicep:"이두근", legs:"다리", back:"등",
+    yesterday:"어제", daysAgo:"일 전",
+    strengthChart:"📈 힘 그래프", benchPressKg:"벤치 프레스 (kg)",
+    todayNutrition:"🥗 오늘의 영양", of:"/", kcal:"kcal",
+    burned:"소모", intake:"섭취", liters:"L",
+    macros:"다량 영양소", protein:"단백질", fat:"지방", carbs:"탄수화물",
+    mealPlan:"📋 식단 계획", breakfast:"아침", lunch:"점심", dinner:"저녁",
+    snacks:"간식", oatmeal:"오트밀", eggs:"달걀", banana:"바나나",
+    chickenBreast:"닭가슴살", rice:"쌀", salad:"샐러드", oliveoil:"올리브 오일",
+    salmon:"연어", sweetpotato:"고구마", broccoli:"브로콜리",
+    protein_shake:"프로틴 쉐이크", almonds:"아몬드",
+    generateMenu:"식단 생성", menuGenerated:"식단이 생성되었습니다!",
+    addTask:"할 일 추가", addHabit:"습관 추가",
+    highPriority:"높은 우선순위", mediumPriority:"중간 우선순위",
+    task1:"프레젠테이션 준비", task2:"아침 운동",
+    task3:"책 한 챕터 읽기", task4:"10분 명상",
+    task5:"비타민 복용", work:"업무", education:"학습", health:"건강",
+    habits:"습관", sport:"스포츠",
+    habitWorkout:"운동", habitRead:"독서",
+    habitWater:"물 2L", habitMeditation:"명상", dayStreak:"일 연속",
+    myCharacter:"⚔️ 내 캐릭터", characterDesc:"계속 성장하세요 — 전설이 되세요!",
+    strength2:"힘", endurance:"지구력", health2:"건강",
+    discipline:"규율", discipline2:"규율", intellect:"지력", finance:"재정",
+    gameCoins:"🪙 게임 코인", shop:"상점", shopSoon:"상점이 곧 오픈됩니다!",
+    lastNight:"어젯밤", weekAvg:"주간 평균", quality:"질",
+    sleepTip:"추천: 최적의 회복을 위해 22:30까지 취침하세요.",
+    generalStats:"📊 전체 통계", totalWorkouts:"총 운동 횟수",
+    totalXP:"총 XP", currentWeight:"현재 체중", bodyFat:"체지방률",
+    muscleMass:"근육량", avgCalories:"평균 칼로리",
+    maxStreak:"최대 연속", days:"일",
+    battlePass:"배틀 패스", season:"시즌 1 · 전사의 길",
+    aiWelcome:"안녕하세요! 저는 AI 트레이너입니다. 당신의 체중(78kg), 키(182cm), 목표(근육 증가)를 알고 있습니다. 오늘 계획의 82%를 완료했습니다. 무엇을 도와드릴까요?",
+    aiAsk:"AI 트레이너에게 물어보세요...",
+    navHome:"홈", navWorkout:"운동", navNutrition:"영양",
+    navTasks:"할 일", navStats:"통계", navAI:"AI",
+    name:"이름", type:"유형", category:"카테고리", priority:"우선순위",
+    high:"높음", medium:"중간", low:"낮음", task:"할 일",
+    xpReward:"XP 보상", save:"저장", cardio:"유산소", stretching:"스트레칭",
+    workoutNamePlaceholder:"예: 다리 — 월요일",
+    searchExercisePlaceholder:"운동 검색...", taskPlaceholder:"무엇을 해야 하나요?",
+    workoutCreated:"운동이 만들어졌습니다!", taskAdded:"할 일이 추가되었습니다!", habitAdded:"습관이 추가되었습니다!",
+    ranks:["초보자","운동선수","전사","챔피언","전설","타이탄"],
+    workoutStarted:"운동 시작! 💪",
+  }
+};
+
+let curLang = 'ru';
+let curXP = 2450;
+let curLevel = 12;
+
+function T(key){ return (translations[curLang]||translations.ru)[key] || key; }
+
+function applyLang(){
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k = el.getAttribute('data-t');
+    if(translations[curLang][k] !== undefined) el.textContent = translations[curLang][k];
+  });
+  document.querySelectorAll('[data-placeholder-t]').forEach(el=>{
+    const k = el.getAttribute('data-placeholder-t');
+    if(translations[curLang][k] !== undefined) el.placeholder = translations[curLang][k];
+  });
+  // Rank
+  const rankLabels = [T('ranks')[0],T('ranks')[1],T('ranks')[2],T('ranks')[3],T('ranks')[4],T('ranks')[5]];
+  const rankIdx = curLevel < 10 ? 0 : curLevel < 20 ? 1 : curLevel < 35 ? 2 : curLevel < 50 ? 3 : curLevel < 75 ? 4 : 5;
+  const rl = document.getElementById('rank-label');
+  const rnd = document.getElementById('rank-name-display');
+  if(rl) rl.textContent = rankLabels[rankIdx];
+  if(rnd) rnd.textContent = rankLabels[rankIdx];
+  // AI input placeholder
+  const ai = document.getElementById('ai-input');
+  if(ai) ai.placeholder = T('aiAsk');
+  // AI welcome
+  const aiw = document.getElementById('ai-welcome-msg');
+  if(aiw) aiw.innerHTML = '👋 ' + T('aiWelcome');
+}
+
+function setLang(l){
+  curLang = l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyLang();
+}
+
+// ── THEME ──
+let isDark = true;
+function toggleTheme(){
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+}
+
+// ── SCREENS ──
+function switchScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='';});
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const s = document.getElementById('screen-'+name);
+  if(s){ s.classList.add('active'); s.style.display = name==='ai' ? 'flex' : ''; }
+  const n = document.getElementById('nav-'+name);
+  if(n) n.classList.add('active');
+}
+
+// ── TABS ──
+function switchTab(tab){
+  document.getElementById('tasks-content').style.display = tab==='tasks'?'block':'none';
+  document.getElementById('habits-content').style.display = tab==='habits'?'block':'none';
+  document.getElementById('tab-tasks').className = 'btn ' + (tab==='tasks'?'btn-primary':'btn-outline');
+  document.getElementById('tab-habits').className = 'btn ' + (tab==='habits'?'btn-primary':'btn-outline');
+}
+
+// ── COMPLETE TASK ──
+function completeTask(el, xp){
+  el.classList.toggle('done');
+  const done = el.classList.contains('done');
+  const check = el.querySelector('.task-check');
+  if(done){ check.textContent='✓'; addXP(xp); showToast('⚡ +'+xp+' XP!'); }
+  else { check.textContent=''; }
+}
+
+// ── XP ──
+function addXP(amount){
+  curXP += amount;
+  const xpToNext = 3000;
+  if(curXP >= xpToNext){ curXP -= xpToNext; curLevel++; showToast('🎉 ' + T('level') + ' ' + curLevel + '!'); }
+  document.getElementById('cur-xp').textContent = curXP.toLocaleString();
+  document.getElementById('hero-level-num').textContent = curLevel;
+  const pct = (curXP / xpToNext * 100).toFixed(0);
+  document.getElementById('xp-fill').style.width = pct + '%';
+  document.getElementById('next-xp').textContent = xpToNext + ' XP → ' + T('level') + ' ' + (curLevel+1);
+}
+
+// ── HABITS ──
+function toggleHabit(el){
+  el.classList.toggle('done');
+  if(el.classList.contains('done')){ el.textContent='✓'; addXP(20); showToast('🔥 +20 XP!'); }
+  else { el.textContent=''; }
+}
+
+// ── WORKOUT ──
+function startWorkout(){
+  addXP(100);
+  showToast(T('workoutStarted'));
+}
+
+// ── MODALS ──
+function showModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function closeModalOutside(e, id){ if(e.target===document.getElementById(id)) closeModal(id); }
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ── CHARTS ──
+function buildChart(id, data, color){
+  const c = document.getElementById(id);
+  if(!c) return;
+  const max = Math.max(...data);
+  c.innerHTML = data.map((v,i)=>`<div class="chart-bar${i===data.length-1?' today':''}" style="height:${(v/max*100).toFixed(0)}%;background:${i===data.length-1?'linear-gradient(var(--accent),var(--accent2))':color}"></div>`).join('');
+}
+
+// ── BATTLE PASS ──
+function buildBP(){
+  const wrap = document.getElementById('bp-levels');
+  if(!wrap) return;
+  const rewards = ['🏅','💪','⚡','🎯','🔥','👑','💎','🦸','🌟','🏆'];
+  let html = '';
+  for(let i=1;i<=30;i++){
+    const unlocked = i <= 23;
+    const current = i === 23;
+    const cls = current ? 'current' : unlocked ? 'unlocked' : 'locked';
+    html += `<div class="bp-level ${cls}">
+      <div class="bp-level-num">${i}</div>
+      <div class="bp-level-reward">${rewards[(i-1)%10]}</div>
+    </div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+// ── AI COACH ──
+const aiResponses = {
+  ru: [
+    "💪 Отличный вопрос! Для набора массы рекомендую увеличить калории на 300 сверх нормы.",
+    "🏋️ Сегодня у тебя день груди. Попробуй увеличить вес жима на 2.5кг — ты готов!",
+    "🥗 Не забудь про протеин! Тебе нужно ещё 35г белка сегодня.",
+    "😴 Твой сон сегодня был 7.5ч — хорошо! Но старайся лечь до 22:30.",
+    "🔥 Серия 7 дней! Не останавливайся — до рекорда 21 день ещё 14 дней.",
+    "📊 Твой индекс жизни сегодня 85/100. Слабое место — питание (75). Добавь больше овощей.",
+  ],
+  en: [
+    "💪 Great question! For muscle gain, add 300 calories above maintenance.",
+    "🏋️ Today is chest day. Try adding 2.5kg to your bench — you're ready!",
+    "🥗 Don't forget protein! You need 35g more today.",
+    "😴 You slept 7.5h — good! Try to get to bed by 10:30 PM.",
+    "🔥 7-day streak! Keep going — 14 more days to beat your record of 21.",
+    "📊 Your life index today is 85/100. Weak point — nutrition (75). Add more vegetables.",
+  ],
+  ko: [
+    "💪 좋은 질문입니다! 근육 증가를 위해 유지 칼로리보다 300kcal 더 섭취하세요.",
+    "🏋️ 오늘은 가슴 운동 날입니다. 벤치 프레스에 2.5kg 추가해보세요 — 준비됐어요!",
+    "🥗 단백질을 잊지 마세요! 오늘 35g 더 필요합니다.",
+    "😴 7.5시간 수면 — 좋아요! 22:30 전에 취침하려고 노력하세요.",
+    "🔥 7일 연속! 계속 가세요 — 최고 기록 21일까지 14일 남았습니다.",
+    "📊 오늘 생활 지수는 85/100. 약점 — 영양 (75). 채소를 더 드세요.",
+  ]
+};
+let aiIdx = 0;
+
+async function sendAI(){
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+  const chat = document.getElementById('ai-chat-messages');
+
+  chat.innerHTML += `<div class="ai-msg user">${msg}</div>`;
+  input.value = '';
+  chat.scrollTop = chat.scrollHeight;
+
+  const thinking = document.createElement('div');
+  thinking.className = 'ai-msg bot';
+  thinking.innerHTML = '<span class="ai-thinking"></span> <span class="ai-thinking" style="animation-delay:.2s"></span> <span class="ai-thinking" style="animation-delay:.4s"></span>';
+  chat.appendChild(thinking);
+  chat.scrollTop = chat.scrollHeight;
+
+  // Call Anthropic API
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:1000,
+        system: curLang==='ru'
+          ? "Ты AI-тренер по имени Форж. Знаешь: вес пользователя 78кг, рост 182см, цель — набор массы, уровень 12. Отвечай кратко (1-3 предложения), мотивируй, давай конкретные советы по тренировкам и питанию. Используй эмодзи."
+          : curLang==='ko'
+          ? "당신은 포지(Forge)라는 AI 트레이너입니다. 사용자 정보: 체중 78kg, 키 182cm, 목표 근육 증가, 레벨 12. 간단하게(1-3문장) 대답하고, 동기부여하며, 구체적인 운동 및 영양 조언을 제공하세요. 이모지를 사용하세요."
+          : "You are an AI trainer named Forge. User: weight 78kg, height 182cm, goal muscle gain, level 12. Reply briefly (1-3 sentences), motivate, give specific workout and nutrition advice. Use emojis.",
+        messages:[{role:"user",content:msg}]
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.map(b=>b.text||'').join('') || aiResponses[curLang][aiIdx++ % aiResponses[curLang].length];
+    thinking.remove();
+    chat.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
+  } catch(e) {
+    const fallback = aiResponses[curLang][aiIdx++ % aiResponses[curLang].length];
+    thinking.remove();
+    chat.innerHTML += `<div class="ai-msg bot">${fallback}</div>`;
+  }
+  chat.scrollTop = chat.scrollHeight;
+}
+
+document.getElementById('ai-input').addEventListener('keydown', e=>{ if(e.key==='Enter') sendAI(); });
+
+// ── INIT ──
+buildChart('strength-chart', [65,70,72,75,73,78,80], 'var(--accent)');
+buildChart('sleep-chart', [7,6.5,8,7.5,7,8,7.5], '#7c3aed');
+buildBP();
+applyLang();
+</script>
+</body>
+</html>
