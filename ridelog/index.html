@@ -69,6 +69,13 @@ hr{border:0;border-top:1px solid var(--line);margin:14px 0}
 dialog{border:1px solid var(--line);border-radius:22px;background:var(--panel);color:var(--text);width:min(460px,calc(100% - 24px));padding:0}dialog::backdrop{background:#000b}
 .dlg{padding:18px;display:grid;gap:12px}.dlg h2{margin:0}
 .place{display:flex;gap:10px;align-items:center}.place img{width:56px;height:56px;object-fit:cover;border-radius:10px;flex:none}
+.nav{min-width:38px;font-size:9.5px}.nav span{font-size:19px}
+.cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cmp .mini{text-align:left;padding:12px}.cmp .d{font-size:12px;font-weight:800;margin-top:3px}.up{color:var(--green)}.down{color:var(--red)}
+.debt.overdue{border-color:#6b1f2c;background:#1c0b10}
+.chat{display:flex;flex-direction:column;gap:10px;min-height:120px}.msg{max-width:88%;padding:11px 13px;border-radius:16px;line-height:1.45;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}.msg.user{align-self:flex-end;background:#2a1609;color:#ffd9b8;border-bottom-right-radius:5px}.msg.bot{align-self:flex-start;background:#151b23;border:1px solid var(--line);border-bottom-left-radius:5px}.msg img{max-width:120px;border-radius:10px;display:block;margin-bottom:6px}
+.tool-chip{align-self:flex-start;font-size:11px;color:var(--muted);border:1px dashed #343c47;border-radius:10px;padding:5px 9px}.tool-chip.ok{color:var(--green);border-color:#0f4a33}.tool-chip.err{color:var(--red);border-color:#6b1f2c}
+.ai-input{display:flex;gap:8px;align-items:flex-end;margin-top:12px}.ai-input textarea{min-height:48px;max-height:160px}.ai-input .btn{padding:13px 14px}.thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.thumbs img{width:54px;height:54px;object-fit:cover;border-radius:9px;border:1px solid var(--line)}
+.typing{align-self:flex-start;color:var(--muted);font-size:13px}
 @media(min-width:600px){main{padding:24px}}
 </style>
 </head>
@@ -80,9 +87,10 @@ dialog{border:1px solid var(--line);border-radius:22px;background:var(--panel);c
 <section class="view active" id="home">
 <div class="head"><div><div class="eyebrow" id="todayLabel">TODAY</div><h1>Обзор</h1></div><span class="pill" id="dateNow"></span></div>
 <div class="hero"><div class="row"><span class="eyebrow">ЧИСТЫЙ РЕЗУЛЬТАТ СЕГОДНЯ</span><span class="tag" id="shiftBadge">СМЕНА OFF</span></div><div class="amount" id="todayNet">₩0</div><div class="muted">Доходы − расходы</div><hr><div class="row"><span>Доход <b id="todayIncome">₩0</b></span><span>Расходы <b class="orange" id="todayExpense">₩0</b></span></div></div>
+<div class="card"><div class="row"><h2>Сегодня и вчера</h2><span class="muted" style="font-size:12px" id="cmpNote"></span></div><div class="cmp" id="dayCmp"></div></div>
 <div class="stats"><div class="metric"><small>Заказы</small><b id="todayOrders">0</b><small>сегодня</small></div><div class="metric"><small>Пробег</small><b id="todayKm">0 км</b><small>сегодня</small></div><div class="metric"><small>Рабочее время</small><b id="todayHours">0 ч</b><small>сегодня</small></div><div class="metric"><small>Доход / час</small><b id="todayHourPay">₩0</b><small>сегодня</small></div></div>
-<div class="card"><h2>Быстрые действия</h2><div class="actions"><button class="btn primary" data-go="work"><strong>▶ Смена</strong><small>Таймер, GPS, заказы</small></button><button class="btn" data-go="finance"><strong>＋ Расход</strong><small>Учёт денег</small></button><button class="btn" data-go="fuel"><strong>⛽ Заправка</strong><small>Топливо и расход</small></button><button class="btn" data-go="bike"><strong>🔧 Расходники</strong><small>Что пора менять</small></button></div></div>
-<div class="card" id="svcAlertCard"><div class="row"><h2>Пора обслужить</h2><button class="text-btn" data-go="bike">Все →</button></div><div id="svcAlerts" class="list"></div></div>
+<div class="card"><h2>Быстрые действия</h2><div class="actions"><button class="btn primary" data-go="work"><strong>▶ Смена</strong><small>Таймер, GPS, заказы</small></button><button class="btn" data-go="finance"><strong>＋ Расход</strong><small>Учёт денег</small></button><button class="btn" data-go="fuel"><strong>⛽ Заправка</strong><small>Топливо и расход</small></button><button class="btn" data-go="bike"><strong>🔧 Расходники</strong><small>Что пора менять</small></button></div><button class="btn outline section" data-go="ai" style="width:100%;text-align:left"><strong>✳ RIDELOG AI</strong> <small class="muted">— скинь скриншот или напиши «потратил 15 тысяч на бензин»</small></button></div>
+<div class="card" id="svcAlertCard"><div class="row"><h2>Внимание</h2><button class="text-btn" data-go="bike">Все →</button></div><div id="svcAlerts" class="list"></div></div>
 <div class="card"><div class="row"><h2>Прогноз месяца</h2><span class="tag">ОЦЕНКА</span></div><div class="amount orange" id="forecast">₩0</div><div class="notice">Оценка по среднему дневному доходу за текущий месяц. Не является гарантией заработка.</div></div>
 <div class="card"><h2>Последние записи</h2><div id="recent" class="list muted">Пока нет записей.</div></div>
 </section>
@@ -112,6 +120,7 @@ dialog{border:1px solid var(--line);border-radius:22px;background:var(--panel);c
 <div class="field full"><label>Заказы</label><input name="orders" type="number" min="0" inputmode="numeric" placeholder="0"></div>
 <div class="field full"><label>Доход по приложению (₩)</label><input name="income" type="number" min="0" inputmode="numeric" placeholder="0"></div>
 <div class="field"><label>Миссии / бонусы (₩)</label><input name="bonus" type="number" min="0" inputmode="numeric" placeholder="0"></div><div class="field"><label>Вычеты (₩)</label><input name="deduction" type="number" min="0" inputmode="numeric" placeholder="0"></div>
+<div class="field full"><label>Аренда аккаунта (₩)</label><input name="rent" type="number" min="0" inputmode="numeric" placeholder="0"><span class="notice" id="rentHint"></span></div>
 <div class="field full"><label>Заметка</label><textarea name="note" placeholder="Погода, условия, детали"></textarea></div>
 <button class="btn primary full" type="submit">Сохранить смену</button></form></div>
 <div class="card"><h2>История смен</h2><div id="shiftHistory" class="list"></div></div>
@@ -142,6 +151,16 @@ dialog{border:1px solid var(--line);border-radius:22px;background:var(--panel);c
 <div class="field"><label>Сумма (₩)</label><input name="amount" type="number" min="1" inputmode="numeric" required placeholder="15000"></div><div class="field"><label>Дата</label><input name="date" type="date" required></div>
 <div class="field full"><label>Описание</label><input name="note" placeholder="Например, бензин 5 литров"></div><button class="btn primary full">Сохранить запись</button></form></div>
 <div class="card"><h2>История финансов</h2><div class="tabs"><button class="tab active" data-filter="all">Все</button><button class="tab" data-filter="income">Доходы</button><button class="tab" data-filter="expense">Расходы</button></div><div id="moneyHistory" class="list"></div></div>
+<div class="card"><div class="row"><h2>История выплат</h2><span class="tag" id="payMonth">₩0</span></div><p class="notice">Деньги, которые платформа реально перевела. Доход уже учтён в сменах, поэтому выплаты не прибавляются к доходу второй раз — здесь видно, сколько пришло и сходится ли с заработанным.</p>
+<form id="payoutForm" class="form"><div class="field"><label>Дата выплаты</label><input name="date" type="date" required></div><div class="field"><label>Сумма ₩</label><input name="amount" type="number" min="1" inputmode="numeric" required></div>
+<div class="field"><label>Платформа</label><select name="platform" id="payPlat"></select></div><div class="field"><label>За период</label><select name="period"><option value="week">Неделя</option><option value="month">Месяц</option><option value="other">Другое</option></select></div>
+<div class="field"><label>С</label><input name="from" type="date"></div><div class="field"><label>По</label><input name="to" type="date"></div>
+<div class="field full"><label>Заметка</label><input name="note" placeholder="Например, расчёт за 2-ю неделю"></div><button class="btn primary full">Записать выплату</button></form>
+<div class="tabs section" id="payTabs"><button class="tab active" data-pay="week">По неделям</button><button class="tab" data-pay="month">По месяцам</button><button class="tab" data-pay="list">Все выплаты</button></div><div id="payouts" class="list"></div></div>
+<div class="card"><h2>Долги</h2><div class="stats"><div class="metric bad"><b id="debtOwe">₩0</b><small>Я должен</small></div><div class="metric good"><b id="debtOwed">₩0</b><small>Мне должны</small></div></div>
+<form id="debtForm" class="form"><div class="field"><label>Кто</label><select name="dir"><option value="owe">Я должен</option><option value="owed">Мне должны</option></select></div><div class="field"><label>Человек / организация</label><input name="person" required></div>
+<div class="field"><label>Сумма ₩</label><input name="amount" type="number" min="1" inputmode="numeric" required></div><div class="field"><label>Вернуть до</label><input name="due" type="date"></div>
+<div class="field full"><label>Заметка</label><input name="note"></div><button class="btn primary full">Добавить долг</button></form><div id="debts" class="list section"></div></div>
 <div class="card"><h2>Постоянные платежи</h2><form id="billForm" class="form"><div class="field"><label>Платёж</label><input name="name" required placeholder="Телефон, аренда..."></div><div class="field"><label>Сумма ₩</label><input name="amount" type="number" inputmode="numeric" required min="1"></div><div class="field"><label>День месяца</label><input name="day" type="number" min="1" max="31" value="1"></div><button class="btn primary">Добавить</button></form><div id="bills" class="list section"></div></div>
 </section>
 
@@ -172,15 +191,25 @@ dialog{border:1px solid var(--line);border-radius:22px;background:var(--panel);c
 <div class="head"><div><div class="eyebrow">TOOLS & PRIVACY</div><h1>Ещё</h1></div></div>
 <div class="actions"><button class="btn" data-go="goals"><strong>🎯 Цели</strong><small>План и копилка</small></button><button class="btn" data-go="fuel"><strong>⛽ Топливо</strong><small>Заправки, л/100 км</small></button></div>
 <div class="card"><h2>Календарь работы</h2><div class="row"><button class="btn outline" id="prevMonth">‹</button><b id="monthTitle">Месяц</b><button class="btn outline" id="nextMonth">›</button></div><div id="calendar" class="section" style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px"></div><div id="calendarDay" class="notice section"></div></div>
-<div class="card"><h2>Настройки</h2><form id="settingsForm" class="form"><div class="field"><label>Налог с дохода, %</label><input name="taxRate" type="number" min="0" max="50" step=".1" inputmode="decimal"></div><div class="field"><label>Страховые взносы, %</label><input name="insRate" type="number" min="0" max="20" step=".01" inputmode="decimal"></div><label class="full row" style="justify-content:flex-start;gap:10px"><input type="checkbox" name="weather" style="width:22px;height:22px;flex:none"> Погода на экране смены (сервис open-meteo.com получает примерные координаты)</label><button class="btn primary full">Сохранить</button></form><p class="notice">Ставки нужны для оценки «на руки» в сравнении платформ. Сверь их с выпиской платформы.</p></div>
+<div class="card"><h2>Настройки</h2><form id="settingsForm" class="form"><div class="field"><label>Налог с дохода, %</label><input name="taxRate" type="number" min="0" max="50" step=".1" inputmode="decimal"></div><div class="field"><label>Страховые взносы, %</label><input name="insRate" type="number" min="0" max="20" step=".01" inputmode="decimal"></div><div class="field full"><label>Аренда аккаунта, % от дохода смены (0 — свой аккаунт)</label><div class="form" id="rentRates"></div></div><label class="full row" style="justify-content:flex-start;gap:10px"><input type="checkbox" name="weather" style="width:22px;height:22px;flex:none"> Погода на экране смены (сервис open-meteo.com получает примерные координаты)</label><button class="btn primary full">Сохранить</button></form><p class="notice">Ставки нужны для оценки «на руки» в сравнении платформ. Сверь их с выпиской платформы.</p></div>
 <div class="card"><h2>Чеки и документы</h2><form id="receiptForm" class="form"><div class="field"><label>Магазин / сервис</label><input name="vendor" required></div><div class="field"><label>Сумма ₩</label><input name="amount" type="number" min="1" inputmode="numeric" required></div><div class="field"><label>Дата</label><input name="date" type="date" required></div><div class="field"><label>Категория</label><select name="category"><option>Топливо</option><option>Ремонт</option><option>Покупка</option><option>Другое</option></select></div><div class="field full"><label>Комментарий</label><input name="note"></div><button class="btn primary full">Сохранить данные чека</button></form><div id="receiptList" class="list section"></div></div>
-<div class="card"><h2>RIDELOG Intelligence</h2><p class="notice">Локальный аналитик по твоим записям. Это не облачная AI-модель.</p><button class="btn primary" id="runAI">Сформировать анализ</button><div id="aiOutput" class="section list"></div></div>
+<div class="card"><h2>Быстрый анализ</h2><p class="notice">Мгновенный расчёт по твоим записям без интернета. Для вопросов, скриншотов и правок записей — раздел AI.</p><button class="btn primary" id="runAI">Сформировать анализ</button><div id="aiOutput" class="section list"></div></div>
 <div class="card"><h2>Обновления</h2><div class="row"><span class="muted">Версия <b id="appVersion"></b></span><button class="btn outline" id="checkUpdate">Проверить</button></div><p class="notice" id="updateStatus">Приложение само проверяет обновления при открытии и каждые 5 минут. Новая версия ставится без выхода из приложения — данные и активная смена сохраняются.</p></div>
 <div class="card"><h2>Резервная копия и приватность</h2><div class="list"><button class="btn outline" id="export">Экспортировать все данные JSON</button><label class="btn outline" style="text-align:center">Импортировать резервную копию<input id="import" type="file" accept="application/json,.json" hidden></label><button class="btn danger" id="wipe">Удалить все данные</button></div><p class="notice">Данные хранятся только на этом устройстве. Регулярно делай резервную копию.</p></div>
 </section>
+<section class="view" id="ai">
+<div class="head"><div><div class="eyebrow">PERSONAL COURIER MANAGER</div><h1>RIDELOG AI</h1></div><div class="row" style="gap:4px"><button class="text-btn" id="aiNew">Новый чат</button><button class="text-btn" id="aiSetBtn">⚙</button></div></div>
+<div class="card" id="aiSetup"><h2>Подключение</h2><p class="notice">Помощник работает через Claude API от Anthropic. Нужен твой API-ключ: создай его на platform.claude.com → API Keys и вставь сюда. Ключ хранится только на этом телефоне и не попадает в резервную копию. Запросы платные — оплата идёт с твоего аккаунта Anthropic. Твои записи и скриншоты, о которых ты спрашиваешь, отправляются в Anthropic для ответа.</p>
+<form id="aiSetupForm" class="form"><div class="field full"><label>API-ключ</label><input name="key" type="password" autocomplete="off" placeholder="sk-ant-…" required></div><div class="field full"><label>Модель</label><select name="model"><option value="claude-opus-5-5">Claude Opus 5.5 — лучше всех читает скриншоты</option><option value="claude-sonnet-5-5">Claude Sonnet 5.5 — дешевле</option><option value="claude-haiku-5-5">Claude Haiku 5.5 — самый дешёвый</option></select></div><button class="btn primary full">Сохранить</button></form>
+<button class="btn danger section hidden" id="aiForget" style="width:100%">Удалить ключ с телефона</button></div>
+<div class="card" id="aiChatCard"><div class="chat" id="chatLog"></div>
+<div class="thumbs" id="aiThumbs"></div>
+<form id="aiForm" class="ai-input"><label class="btn outline" title="Фото или скриншот">📷<input type="file" id="aiPhoto" accept="image/*" multiple hidden></label><textarea name="q" placeholder="Например: «добавь смену Coupang, 14 заказов, 90 тысяч»" rows="1"></textarea><button class="btn primary" id="aiSend" aria-label="Отправить">➤</button></form>
+<p class="notice">AI меняет записи только по твоей просьбе. Удаление — всегда с подтверждением.</p></div>
+</section>
 </main>
 <nav class="bottom">
-<button class="nav active" data-view="home"><span>⌂</span>Главная</button><button class="nav" data-view="work"><span>➤</span>Смена</button><button class="nav" data-view="stats"><span>▥</span>Статистика</button><button class="nav" data-view="finance"><span>₩</span>Финансы</button><button class="nav" data-view="bike"><span>🔧</span>Мото</button><button class="nav" data-view="more"><span>☰</span>Ещё</button>
+<button class="nav active" data-view="home"><span>⌂</span>Главная</button><button class="nav" data-view="work"><span>➤</span>Смена</button><button class="nav" data-view="stats"><span>▥</span>Статистика</button><button class="nav" data-view="finance"><span>₩</span>Финансы</button><button class="nav" data-view="bike"><span>🔧</span>Мото</button><button class="nav" data-view="ai"><span>✳</span>AI</button><button class="nav" data-view="more"><span>☰</span>Ещё</button>
 </nav></div><div class="toast" id="toast"></div>
 
 <dialog id="svcDlg"><form method="dialog" class="dlg" id="svcForm">
@@ -204,7 +233,7 @@ dialog{border:1px solid var(--line);border-radius:22px;background:var(--panel);c
 
 <script>
 'use strict';
-const APP_VERSION='2.1.0';
+const APP_VERSION='2.2.0';
 const KEY='ridelog_v2', OLD_KEY='ridelog_private_v1';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const localDate=d=>d.toLocaleDateString('en-CA'); // YYYY-MM-DD по местному времени
@@ -222,14 +251,14 @@ const fmtMin=m=>{m=Math.round(m);if(!m)return '—';const h=Math.floor(m/60),mm=
 const PLATFORMS=[{name:'Coupang Eats',short:'Coupang',color:'#1e8fd6'},{name:'Baemin Connect',short:'Baemin',color:'#2ac1bc'},{name:'요기요',short:'Yogiyo',color:'#fa0050'},{name:'땡겨요',short:'Ddangyo',color:'#ff8a00'},{name:'Другое',short:'Другое',color:'#6b7480'}];
 const platOf=n=>PLATFORMS.find(p=>p.name===n)||{name:n,short:n||'—',color:'#6b7480'};
 const badge=n=>{const p=platOf(n);return `<span class="badge" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color}66">${esc(p.short)}</span>`};
-const EXP_CATS=['Топливо','Еда','Парковка','Мойка','Ремонт','Масло / детали','Аренда','Телефон','Страховка','Сигареты','Другое'];
-const INC_CATS=['Доход Coupang','Доход Baemin','Бонус / миссия','Другая работа','Другое'];
+const EXP_CATS=['Топливо','Еда','Парковка','Мойка','Ремонт','Масло','Шины','Запчасти','Страховка','Аренда','Телефон','Сигареты','Другое'];
+const INC_CATS=['Доход Coupang','Доход Baemin','Доход Yogiyo','Бонус / миссия','Другая работа','Другое'];
 
 /* ---------- Хранилище ---------- */
-const blank={shifts:[],money:[],services:[],repairs:[],fuel:[],bills:[],receipts:[],places:[],odo:0,odoDate:'',goal:0,savingGoal:0,saved:0,challengeOrders:20,challengeIncome:150000,activeShift:null,pendingShift:null,floor:'',settings:{taxRate:3.3,insRate:0,weekStart:1,weather:false}};
+const blank={shifts:[],money:[],services:[],repairs:[],fuel:[],bills:[],receipts:[],places:[],payouts:[],debts:[],odo:0,odoDate:'',goal:0,savingGoal:0,saved:0,challengeOrders:20,challengeIncome:150000,activeShift:null,pendingShift:null,floor:'',settings:{taxRate:3.3,insRate:0,weekStart:1,weather:false,rent:{}}};
 const fresh=()=>JSON.parse(JSON.stringify(blank));
 function normalize(x){let d={...fresh(),...(x&&typeof x==='object'?x:{})};for(let k of Object.keys(blank))if(Array.isArray(blank[k])&&!Array.isArray(d[k]))d[k]=[];d.settings={...blank.settings,...(d.settings||{})};
- d.shifts.forEach(s=>{s.id=s.id||uid()});d.money.forEach(m=>{m.id=m.id||uid()});d.services.forEach(s=>{s.id=s.id||uid();s.group=s.group||'Другое'});return d}
+ d.shifts.forEach(s=>{s.id=s.id||uid()});d.money.forEach(m=>{m.id=m.id||uid()});d.services.forEach(s=>{s.id=s.id||uid();s.group=s.group||'Другое'});d.settings.rent=d.settings.rent&&typeof d.settings.rent==='object'?d.settings.rent:{};return d}
 // Перенос из версии 0.x (ключ ridelog_private_v1), один раз; старые данные не удаляются
 function migrateOld(){let old;try{old=JSON.parse(localStorage.getItem(OLD_KEY)||'null')}catch(e){old=null}if(!old)return null;
  let d=fresh();
@@ -245,8 +274,10 @@ function save(){persist();render()}
 
 /* ---------- Расчёты ---------- */
 const shInc=s=>num(s.income)+num(s.bonus);
-function totals(shifts,money){const fee=sum(shifts,'income'),bonus=sum(shifts,'bonus'),otherInc=sum(money.filter(x=>x.type==='income'),'amount'),exp=sum(money.filter(x=>x.type==='expense'),'amount')+sum(shifts,'deduction');
- return {fee,bonus,inc:fee+bonus+otherInc,exp,net:fee+bonus+otherInc-exp,orders:sum(shifts,'orders'),km:sum(shifts,'km'),min:sum(shifts,'minutes'),workInc:fee+bonus}}
+const rentPct=pl=>num(db.settings.rent?.[pl]);
+// Расходы включают вычеты смен и аренду аккаунта
+function totals(shifts,money){const fee=sum(shifts,'income'),bonus=sum(shifts,'bonus'),otherInc=sum(money.filter(x=>x.type==='income'),'amount'),rent=sum(shifts,'rent'),exp=sum(money.filter(x=>x.type==='expense'),'amount')+sum(shifts,'deduction')+rent;
+ return {fee,bonus,rent,inc:fee+bonus+otherInc,exp,net:fee+bonus+otherInc-exp,orders:sum(shifts,'orders'),km:sum(shifts,'km'),min:sum(shifts,'minutes'),workInc:fee+bonus}}
 const inR=(d,from,to)=>d>=from&&d<=to;
 
 /* ---------- Главная ---------- */
@@ -259,9 +290,20 @@ function renderHome(){
  let recent=[...db.shifts.map(x=>({date:x.date,label:'Смена · '+platOf(x.platform).short,amount:shInc(x)})),...db.money.map(x=>({date:x.date,label:x.category,amount:x.type==='expense'?-x.amount:+x.amount}))].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,5);
  $('#recent').innerHTML=recent.length?recent.map(x=>`<div class="item row"><div><b>${esc(x.label)}</b><div class="muted">${esc(x.date)}</div></div><b class="${x.amount<0?'orange':'green'}">${x.amount<0?'−':'+'}${won(Math.abs(x.amount))}</b></div>`).join(''):'Пока нет записей.';
  let due=db.services.map(s=>({s,st:svcStatus(s)})).filter(x=>x.st.frac>=.85).sort((a,b)=>b.st.frac-a.st.frac);
- $('#svcAlertCard').classList.toggle('hidden',!due.length);
- $('#svcAlerts').innerHTML=due.slice(0,4).map(({s,st})=>`<div class="item row"><b>${esc(s.name)}</b><span class="${st.frac>=1?'red':'orange'}" style="text-align:right">${esc(st.text)}</span></div>`).join('');
+ let late=db.debts.filter(d=>!d.closed&&d.due&&d.due<=today()&&debtLeft(d)>0);
+ $('#svcAlertCard').classList.toggle('hidden',!due.length&&!late.length);
+ $('#svcAlerts').innerHTML=late.map(d=>`<div class="item row"><b>${d.dir==='owe'?'Вернуть':'Получить'}: ${esc(d.person)}</b><span class="red">${won(debtLeft(d))} · ${d.due<today()?'просрочено':'сегодня'}</span></div>`).join('')+due.slice(0,4).map(({s,st})=>`<div class="item row"><b>${esc(s.name)}</b><span class="${st.frac>=1?'red':'orange'}" style="text-align:right">${esc(st.text)}</span></div>`).join('');
+ renderDayCmp();
 }
+
+function renderDayCmp(){let y=new Date();y.setDate(y.getDate()-1);let yk=localDate(y),tk=today();
+ const T=k=>totals(db.shifts.filter(x=>x.date===k),db.money.filter(x=>x.date===k));let a=T(tk),b=T(yk);
+ const hr=t=>t.min?t.workInc/(t.min/60):0;
+ const cell=(name,va,vb,f)=>{let d=va-vb,pct=vb?Math.round(d/Math.abs(vb)*100):null;let cls=d>0?'up':d<0?'down':'muted';
+  let txt=!va&&!vb?'нет данных':d===0?'как вчера':`${d>0?'▲':'▼'} ${f(Math.abs(d))}${pct!=null?` (${d>0?'+':'−'}${Math.abs(pct)}%)`:''}`;
+  return `<div class="mini"><small>${name}</small><b>${f(va)}</b><div class="d ${cls}">${txt}</div><small>вчера ${f(vb)}</small></div>`};
+ $('#dayCmp').innerHTML=cell('Чистыми',a.net,b.net,won)+cell('Доход смен',a.workInc,b.workInc,won)+cell('Заказы',a.orders,b.orders,v=>String(Math.round(v)))+cell('Доход в час',hr(a),hr(b),won);
+ $('#cmpNote').textContent=db.activeShift?'смена ещё идёт':''}
 
 /* ---------- Смена ---------- */
 let watch=null,tick=null,wakeLock=null,placesOpen=false,lastFix=null;
@@ -333,12 +375,17 @@ async function loadWeather(){if(!db.settings.weather){$('#hudWeather').textConte
 /* Форма смены */
 $('#platChips').innerHTML=PLATFORMS.map((p,i)=>`<label><input type="radio" name="platform" value="${esc(p.name)}" ${i===0?'checked':''}><span>${esc(p.short)}</span></label>`).join('');
 function resetShiftForm(){let f=$('#shiftForm');f.elements.date.value=today();let last=db.shifts[db.shifts.length-1];if(last){let r=[...f.querySelectorAll('input[name=platform]')].find(x=>x.value===last.platform);if(r)r.checked=true}}
+function calcRent(){let f=$('#shiftForm').elements,pl=$('#shiftForm').querySelector('input[name=platform]:checked')?.value,pct=rentPct(pl);
+ let base=num(f.income.value)+num(f.bonus.value);if(!f.rent.dataset.manual)f.rent.value=pct&&base?Math.round(base*pct/100):'';
+ $('#rentHint').textContent=pct?`Аренда ${pct}% для ${platOf(pl).short} — считается автоматически, можно исправить вручную.`:'Если работаешь на арендованном аккаунте, впиши процент в «Ещё → Настройки».'}
+$('#shiftForm').addEventListener('input',e=>{if(e.target.name==='rent')e.target.dataset.manual=e.target.value?'1':'';else calcRent()});
+$('#shiftForm').addEventListener('change',e=>{if(e.target.name==='platform')calcRent()});
 $('#shiftForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));
- let s={id:uid(),platform:x.platform||'Другое',date:x.date||today(),orders:num(x.orders),minutes:num(x.minutes),income:num(x.income),bonus:num(x.bonus),km:num(x.km),deduction:num(x.deduction),area:(x.area||'').trim(),note:(x.note||'').trim()};
+ let s={id:uid(),platform:x.platform||'Другое',date:x.date||today(),orders:num(x.orders),minutes:num(x.minutes),income:num(x.income),bonus:num(x.bonus),km:num(x.km),deduction:num(x.deduction),rent:num(x.rent),area:(x.area||'').trim(),note:(x.note||'').trim()};
  if(!s.income&&!s.orders&&!s.bonus)return toast('Впиши хотя бы доход или количество заказов');
- db.shifts.push(s);if(s.km>0)db.odo=Math.round((num(db.odo)+s.km)*10)/10;db.pendingShift=null;e.target.reset();resetShiftForm();save();toast('Смена сохранена')});
+ db.shifts.push(s);if(s.km>0)db.odo=Math.round((num(db.odo)+s.km)*10)/10;db.pendingShift=null;e.target.reset();delete e.target.elements.rent.dataset.manual;resetShiftForm();calcRent();save();toast('Смена сохранена')});
 function renderShiftHistory(){let list=db.shifts.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,30);
- $('#shiftHistory').innerHTML=list.length?list.map(s=>`<div class="item row"><div style="min-width:0">${badge(s.platform)} <b>${esc(s.date)}</b><div class="muted" style="font-size:12px;margin-top:4px">${num(s.orders)} зак. · ${fmtMin(s.minutes)} · ${num(s.km).toFixed(1)} км${s.area?' · '+esc(s.area):''}</div></div><div class="right"><b class="green">${won(shInc(s))}</b><div><button class="text-btn del" data-del-shift="${s.id}">Удалить</button></div></div></div>`).join(''):'<span class="muted">Смен пока нет.</span>';
+ $('#shiftHistory').innerHTML=list.length?list.map(s=>`<div class="item row"><div style="min-width:0">${badge(s.platform)} <b>${esc(s.date)}</b><div class="muted" style="font-size:12px;margin-top:4px">${num(s.orders)} зак. · ${fmtMin(s.minutes)} · ${num(s.km).toFixed(1)} км${s.rent?' · аренда '+won(s.rent):''}${s.area?' · '+esc(s.area):''}</div></div><div class="right"><b class="green">${won(shInc(s))}</b><div><button class="text-btn del" data-del-shift="${s.id}">Удалить</button></div></div></div>`).join(''):'<span class="muted">Смен пока нет.</span>';
  $('#areaList').innerHTML=[...new Set(db.shifts.map(s=>s.area).filter(Boolean))].map(a=>`<option value="${esc(a)}">`).join('')}
 
 /* ---------- Статистика ---------- */
@@ -399,11 +446,11 @@ function renderStats(){
 }
 function renderPlatforms(sh){
  let tax=(num(db.settings.taxRate)+num(db.settings.insRate))/100,pl={};
- sh.forEach(x=>{let p=pl[x.platform]??={inc:0,ded:0,orders:0,km:0,min:0,n:0};p.inc+=shInc(x);p.ded+=num(x.deduction);p.orders+=num(x.orders);p.km+=num(x.km);p.min+=num(x.minutes);p.n++});
+ sh.forEach(x=>{let p=pl[x.platform]??={inc:0,ded:0,orders:0,km:0,min:0,n:0};p.inc+=shInc(x);p.ded+=num(x.deduction)+num(x.rent);p.orders+=num(x.orders);p.km+=num(x.km);p.min+=num(x.minutes);p.n++});
  let arr=Object.entries(pl).map(([name,v])=>{let rate=v.inc?Math.min(1,v.ded/v.inc+tax):0;return {name,...v,rate,net:v.inc*(1-rate),hourNet:v.min?v.inc*(1-rate)/(v.min/60):0}}).sort((a,b)=>b.hourNet-a.hourNet||b.net-a.net);
  if(!arr.length){$('#platCompare').innerHTML='Нет смен за период.';return}
  $('#platCompare').innerHTML=arr.map((p,i)=>`<div class="plat ${i===0&&arr.length>1?'best':''}"><div class="row"><div style="min-width:0">${badge(p.name)} <b>${esc(platOf(p.name).name)}</b> ${i===0&&arr.length>1?'<span class="tag">🏆 ЛУЧШЕ</span>':''}<div class="muted" style="font-size:12px;margin-top:5px">${p.n} смен · ${p.orders} заказов · ${won(p.inc)}</div></div><div class="right"><b class="orange">${won(1e6*(1-p.rate))}</b><div class="muted" style="font-size:11px">на руки с ₩1 000 000</div></div></div>
- <div class="bar"><i style="width:${(100*(1-p.rate)).toFixed(1)}%"></i></div><div class="muted" style="font-size:11px">Удержания ${(p.rate*100).toFixed(1)}%: вычеты ${p.inc?(p.ded/p.inc*100).toFixed(1):0}% + налог/взносы ${(tax*100).toFixed(1)}%</div>
+ <div class="bar"><i style="width:${(100*(1-p.rate)).toFixed(1)}%"></i></div><div class="muted" style="font-size:11px">Удержания ${(p.rate*100).toFixed(1)}%: вычеты и аренда ${p.inc?(p.ded/p.inc*100).toFixed(1):0}% + налог/взносы ${(tax*100).toFixed(1)}%</div>
  <div class="grid3 section"><div class="mini hl"><b>${fmtN(p.min?p.inc/(p.min/60):0)}</b><small>₩/час</small></div><div class="mini"><b>${p.km.toFixed(1)}</b><small>км</small></div><div class="mini"><b>${fmtN(p.orders?p.inc/p.orders:0)}</b><small>₩/заказ</small></div><div class="mini"><b>${p.orders?(p.km/p.orders).toFixed(1):'0'}</b><small>км/заказ</small></div><div class="mini hl"><b>${fmtN(p.km?p.inc/p.km:0)}</b><small>₩/км</small></div><div class="mini"><b>${fmtN(p.hourNet)}</b><small>₩/час на руки</small></div></div></div>`).join('')}
 
 /* ---------- Финансы ---------- */
@@ -417,6 +464,34 @@ function renderFinance(){let t=totals(db.shifts,db.money);$('#allNet').textConte
 $$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{moneyFilter=b.dataset.filter;$$('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderFinance()}));
 $('#moneyForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.amount=num(x.amount);x.id=uid();db.money.push(x);e.target.elements.amount.value='';e.target.elements.note.value='';save();toast('Запись сохранена')});
 $('#billForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.amount=num(x.amount);x.day=num(x.day);db.bills.push(x);e.target.reset();save()});
+
+/* ---------- Выплаты ---------- */
+let payView='week';
+$('#payPlat').innerHTML=PLATFORMS.map(p=>`<option value="${esc(p.name)}">${esc(p.short)}</option>`).join('');
+$('#payTabs').onclick=e=>{let b=e.target.closest('[data-pay]');if(!b)return;payView=b.dataset.pay;$$('#payTabs .tab').forEach(x=>x.classList.toggle('active',x===b));renderPayouts()};
+function payoutExpected(p){if(!p.from||!p.to)return null;let sh=db.shifts.filter(s=>s.date>=p.from&&s.date<=p.to&&(!p.platform||s.platform===p.platform));if(!sh.length)return null;return sum(sh,s=>shInc(s)-num(s.deduction)-num(s.rent))}
+function weekKey(k){let d=parseD(k),ws=num(db.settings.weekStart);d.setDate(d.getDate()-((d.getDay()-ws+7)%7));return localDate(d)}
+function renderPayouts(){let list=db.payouts.slice().sort((a,b)=>b.date.localeCompare(a.date));
+ $('#payMonth').textContent='в этом месяце '+won(sum(list.filter(p=>p.date.startsWith(today().slice(0,7))),'amount'));
+ if(!list.length){$('#payouts').innerHTML='<span class="muted">Выплат пока нет.</span>';return}
+ if(payView==='list'){$('#payouts').innerHTML=list.map(p=>{let exp=payoutExpected(p),diff=exp==null?null:p.amount-exp;return `<div class="item row"><div style="min-width:0">${badge(p.platform)} <b>${esc(p.date)}</b><div class="muted" style="font-size:12px;margin-top:4px">${{week:'за неделю',month:'за месяц',other:'выплата'}[p.period]||''}${p.from?` ${esc(p.from)} — ${esc(p.to||'')}`:''}${p.note?' · '+esc(p.note):''}${diff!=null?`<br>по сменам ожидалось ${won(exp)} · <span class="${Math.abs(diff)<1?'green':diff>0?'green':'red'}">${Math.abs(diff)<1?'сходится':(diff>0?'+':'−')+won(Math.abs(diff))}</span>`:''}</div></div><div class="right"><b class="green">${won(p.amount)}</b><div><button class="text-btn del" data-del-payout="${p.id}">Удалить</button></div></div></div>`}).join('');return}
+ let groups={};list.forEach(p=>{let k=payView==='week'?weekKey(p.date):p.date.slice(0,7);(groups[k]??=[]).push(p)});
+ $('#payouts').innerHTML=Object.entries(groups).sort((a,b)=>b[0].localeCompare(a[0])).map(([k,ps])=>{let label=payView==='week'?(()=>{let s=parseD(k),e=new Date(s);e.setDate(s.getDate()+6);return `${s.toLocaleDateString('ru-RU',{day:'numeric',month:'short'})} — ${e.toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'})}`})():parseD(k+'-01').toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+  let by={};ps.forEach(p=>{by[p.platform]=(by[p.platform]||0)+num(p.amount)});
+  return `<div class="item"><div class="row"><b>${label}</b><b class="green">${won(sum(ps,'amount'))}</b></div><div class="muted" style="font-size:12px;margin-top:6px">${Object.entries(by).map(([pl,v])=>`${badge(pl)} ${won(v)}`).join(' &nbsp; ')} · ${ps.length} выпл.</div></div>`}).join('')}
+$('#payoutForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));db.payouts.push({id:uid(),date:x.date,amount:num(x.amount),platform:x.platform,period:x.period,from:x.from||'',to:x.to||'',note:(x.note||'').trim()});e.target.reset();e.target.elements.date.value=today();save();toast('Выплата записана')});
+
+/* ---------- Долги ---------- */
+const debtLeft=d=>Math.max(0,num(d.amount)-sum(d.payments||[],'amount'));
+function renderDebts(){let open=db.debts.filter(d=>!d.closed&&debtLeft(d)>0);
+ $('#debtOwe').textContent=won(sum(open.filter(d=>d.dir==='owe'),debtLeft));$('#debtOwed').textContent=won(sum(open.filter(d=>d.dir==='owed'),debtLeft));
+ let list=db.debts.slice().sort((a,b)=>(!!a.closed-!!b.closed)||(a.due||'9999').localeCompare(b.due||'9999'));
+ $('#debts').innerHTML=list.length?list.map(d=>{let left=debtLeft(d),done=d.closed||left<=0,late=!done&&d.due&&d.due<today();return `<div class="item debt ${late?'overdue':''}" style="${done?'opacity:.55':''}"><div class="row"><div style="min-width:0"><span class="tag" style="${d.dir==='owe'?'color:var(--red);background:#2a0d13':'color:var(--green);background:#06180f'}">${d.dir==='owe'?'Я должен':'Мне должны'}</span> <b>${esc(d.person)}</b><div class="muted" style="font-size:12px;margin-top:5px">${d.due?(late?'<span class="red">просрочено · до '+esc(d.due)+'</span>':'до '+esc(d.due)):'без срока'}${d.note?' · '+esc(d.note):''}${(d.payments||[]).length?` · оплачено ${won(sum(d.payments,'amount'))} из ${won(d.amount)}`:''}</div></div><div class="right"><b>${done?'закрыт':won(left)}</b></div></div>${done?`<div class="row" style="justify-content:flex-end"><button class="text-btn del" data-debt-del="${d.id}">Удалить</button></div>`:`<div class="row" style="justify-content:flex-end;gap:12px"><button class="text-btn" data-debt-pay="${d.id}">Частичная оплата</button><button class="text-btn" data-debt-close="${d.id}">✓ Закрыть</button><button class="text-btn del" data-debt-del="${d.id}">Удалить</button></div>`}</div>`}).join(''):'<span class="muted">Долгов нет.</span>'}
+$('#debtForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));db.debts.push({id:uid(),dir:x.dir,person:x.person.trim(),amount:num(x.amount),due:x.due||'',note:(x.note||'').trim(),created:today(),payments:[],closed:false});e.target.reset();save();toast('Долг записан')});
+$('#debts').onclick=e=>{let b;
+ if(b=e.target.closest('[data-debt-pay]')){let d=db.debts.find(x=>x.id===b.dataset.debtPay);let v=num(prompt(`Сколько оплачено? Осталось ${won(debtLeft(d))}`,''));if(v>0){d.payments=d.payments||[];d.payments.push({date:today(),amount:v});if(debtLeft(d)<=0)d.closed=true;save();toast('Оплата записана')}}
+ else if(b=e.target.closest('[data-debt-close]')){let d=db.debts.find(x=>x.id===b.dataset.debtClose);if(confirm(`Закрыть долг «${d.person}»?`)){let left=debtLeft(d);if(left>0)(d.payments=d.payments||[]).push({date:today(),amount:left});d.closed=true;save()}}
+ else if(b=e.target.closest('[data-debt-del]')){if(confirm('Удалить запись о долге?')){db.debts=db.debts.filter(x=>x.id!==b.dataset.debtDel);save()}}};
 
 /* ---------- Мото: расходники ---------- */
 // [группа, название, интервал км, интервал мес., подсказка] — примерные значения, редактируются
@@ -468,8 +543,9 @@ $('#goalForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fro
 $('#savingForm').addEventListener('submit',e=>{e.preventDefault();db.saved+=num(new FormData(e.target).get('amount'));e.target.reset();save();toast('Копилка пополнена')});
 $('#challengeForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));db.challengeOrders=num(x.orders);db.challengeIncome=num(x.income);document.activeElement?.blur();save();toast('Челлендж сохранён')});
 $('#receiptForm').addEventListener('submit',e=>{e.preventDefault();db.receipts.push(Object.fromEntries(new FormData(e.target)));e.target.reset();e.target.elements.date.value=today();save();toast('Данные чека сохранены')});
-$('#settingsForm').addEventListener('submit',e=>{e.preventDefault();let f=e.target.elements;db.settings.taxRate=num(f.taxRate.value);db.settings.insRate=num(f.insRate.value);db.settings.weather=f.weather.checked;weatherAt=0;save();loadWeather();toast('Настройки сохранены')});
-function fillSettings(){let f=$('#settingsForm').elements;f.taxRate.value=db.settings.taxRate;f.insRate.value=db.settings.insRate;f.weather.checked=!!db.settings.weather}
+$('#settingsForm').addEventListener('submit',e=>{e.preventDefault();let f=e.target.elements;db.settings.taxRate=num(f.taxRate.value);db.settings.insRate=num(f.insRate.value);db.settings.weather=f.weather.checked;$$('[data-rent]').forEach(i=>{let v=num(i.value);if(v)db.settings.rent[i.dataset.rent]=v;else delete db.settings.rent[i.dataset.rent]});weatherAt=0;calcRent();save();loadWeather();toast('Настройки сохранены')});
+$('#rentRates').innerHTML=PLATFORMS.map(p=>`<div class="field"><label>${esc(p.short)}, %</label><input data-rent="${esc(p.name)}" type="number" min="0" max="100" step=".1" inputmode="decimal" placeholder="0"></div>`).join('');
+function fillSettings(){let f=$('#settingsForm').elements;f.taxRate.value=db.settings.taxRate;f.insRate.value=db.settings.insRate;f.weather.checked=!!db.settings.weather;$$('[data-rent]').forEach(i=>{i.value=db.settings.rent[i.dataset.rent]||''})}
 let cal=new Date(),calYear=cal.getFullYear(),calMonth=cal.getMonth();
 function renderMore(){
  $('#receiptList').innerHTML=db.receipts.slice().reverse().map(x=>`<div class="item row"><div><b>${esc(x.vendor)}</b><div class="muted">${esc(x.date)} · ${esc(x.category)}</div></div><b>${won(x.amount)}</b></div>`).join('')||'<span class="muted">Чеков нет.</span>';
@@ -486,6 +562,7 @@ document.addEventListener('click',e=>{
  let m=e.target.closest('[data-del-money]');if(m&&confirm('Удалить эту запись?')){db.money=db.money.filter(x=>x.id!==m.dataset.delMoney);save()}
  let s=e.target.closest('[data-del-shift]');if(s&&confirm('Удалить эту смену?')){db.shifts=db.shifts.filter(x=>x.id!==s.dataset.delShift);save()}
  let b=e.target.closest('[data-del-bill]');if(b){db.bills.splice(+b.dataset.delBill,1);save()}
+ let po=e.target.closest('[data-del-payout]');if(po&&confirm('Удалить выплату?')){db.payouts=db.payouts.filter(x=>x.id!==po.dataset.delPayout);save()}
  let p=e.target.closest('[data-del-place]');if(p){db.places=db.places.filter(x=>x.id!==p.dataset.delPlace);persist();renderPlaces()}
  let c=e.target.closest('[data-cal]');if(c){let d=c.dataset.cal,sh=db.shifts.filter(x=>x.date===d),t=totals(sh,db.money.filter(x=>x.date===d));$('#calendarDay').innerHTML=`<b>${d}</b>: ${sh.length} смен · ${t.orders} заказов · доход ${won(t.inc)} · расходы ${won(t.exp)} · итог <b>${won(t.net)}</b>`}
 });
@@ -497,13 +574,161 @@ $('#import').onchange=async e=>{try{let x=JSON.parse(await e.target.files[0].tex
  if(!confirm('Заменить текущие данные импортированной копией?'))return;stopTracking();db=normalize(x);save();if(db.activeShift)startTracking();toast('Резервная копия импортирована')}catch(err){toast('Не удалось прочитать файл')}finally{e.target.value=''}};
 $('#wipe').onclick=()=>{if(confirm('Удалить ВСЕ данные RIDELOG с этого устройства?')){stopTracking();db=fresh();save();toast('Данные удалены')}};
 
+/* ---------- RIDELOG AI (Claude API + инструменты базы) ---------- */
+const AI_KEY='ridelog_ai_key',AI_MODEL='ridelog_ai_model';
+let aiMsgs=[],aiBusy=false,aiImgs=[],AnthropicSDK=null;
+const lsGet=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
+const lsSet=(k,v)=>{try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}};
+const AI_SYSTEM=`Ты — RIDELOG AI, персональный агент внутри приложения RIDELOG. Твоя единственная задача — помогать владельцу управлять работой курьера, заработком, финансами, мотоциклом Zontes 368G, обслуживанием и статистикой. Ты не универсальный чат-бот. Отвечай по-русском, если не попросили другой язык. Будь кратким, точным и практичным.
+
+ДАННЫЕ И ИНСТРУМЕНТЫ
+Все данные лежат в базе RIDELOG на телефоне пользователя; читай и меняй их только через инструменты. Валюта — воны (₩), суммы — целые числа. Даты — YYYY-MM-DD; текущая дата приходит в начале каждого сообщения пользователя.
+Смена (shift): platform (одно из: "Coupang Eats", "Baemin Connect", "요기요", "땡겨요", "Другое"), date, orders, minutes, km, income (оплата заказов по приложению), bonus (миссии/бонусы), deduction (вычеты платформы), rent (аренда аккаунта в ₩), area, note. Если rent не указан, приложение посчитает его по проценту аренды из настроек.
+Транзакция: type income|expense, category, amount, date, note. Категории расходов: Топливо, Еда, Парковка, Мойка, Ремонт, Масло, Шины, Запчасти, Страховка, Аренда, Телефон, Сигареты, Другое. Доходов: Доход Coupang, Доход Baemin, Доход Yogiyo, Бонус / миссия, Другая работа, Другое. Доход смен хранится в сменах, не дублируй его транзакцией.
+Выплата (payout) — деньги, реально перечисленные платформой; к доходу не прибавляется. Долг (debt): dir owe (я должен) | owed (мне должны).
+Если пользователь просит изменить данные — выполни действие инструментом, не ограничивайся советом. Перед добавлением проверь существующие записи (get_shifts / get_transactions), чтобы не создать дубль. После операции сообщи, что именно изменилось. Никогда не говори, что запись добавлена, изменена или удалена, если инструмент не вернул ok.
+«Сегодня сделал 14 заказов» — найди сегодняшнюю смену и обнови её; если её нет — создай. «Поменяй доход на 110 тысяч» — найди нужную запись; если подходит несколько, уточни какую. Для неоднозначного удаления или крупного изменения сначала уточни конкретную запись. Удаление пользователь дополнительно подтверждает в приложении.
+
+СКРИНШОТЫ
+Определи платформу, найди дату, заказы, доход, бонусы, вычеты и другие видимые показатели. Различай: сумму отдельного заказа, итог за смену/день, накопленный итог за неделю, бонусы и миссии, сумму после вычетов, фактическую выплату. Не складывай повторно суммы, уже входящие в итог. Не выдумывай цифры, которых нет на изображении. Перед записью проверь, нет ли уже такой смены. Если данные однозначны — запиши; если важная цифра неразборчива — задай один конкретный вопрос. Недельный итог платформы — это не одна смена: если за эти дни уже есть смены, сверь и покажи расхождения, а не создавай запись поверх.
+
+ФИНАНСЫ
+Чистая прибыль = доходы − расходы (включая вычеты и аренду аккаунта). Не называй валовой доход чистой прибылью. Проверяй арифметику; не соглашайся с неверными расчётами пользователя; если данные противоречат друг другу — скажи об этом. Для отчётов используй get_statistics.
+
+МОТОЦИКЛ
+При записи обслуживания сохраняй дату, пробег, стоимость и описание (add_maintenance). Интервалы в приложении примерные — не выдавай их за официальные рекомендации Zontes.
+
+ПОВЕДЕНИЕ
+Не переспрашивай то, что уже есть в базе. Понимай разговорные сообщения и короткие команды («90 тысяч» = 90000). Не меняй данные без запроса пользователя. Никогда не проси пароли от Coupang, Baemin или банков.
+
+ФОРМАТ
+Коротко. После записи: «Готово. Записал смену Coupang Eats:» и список полей (заказы, доход, бонусы, дата). После анализа: чистая прибыль, лучший день, средний доход в час, лучшая платформа. Без длинных пояснений и без markdown-таблиц.`;
+
+const S=(props,req=[])=>({type:'object',properties:props,required:req});
+const str={type:'string'},int={type:'number'},date={type:'string',description:'YYYY-MM-DD'};
+const shiftProps={date,platform:str,orders:int,minutes:int,km:int,income:int,bonus:int,deduction:int,rent:int,area:str,note:str};
+const AI_TOOLS=[
+ {name:'get_shifts',description:'Список смен с фильтрами. Возвращает id для изменения.',input_schema:S({from:date,to:date,platform:str})},
+ {name:'add_shift',description:'Создать смену. Отказывает, если такая смена уже есть (force=true — создать всё равно).',input_schema:S({...shiftProps,force:{type:'boolean'}},['date','platform'])},
+ {name:'update_shift',description:'Изменить поля смены по id.',input_schema:S({id:str,fields:S(shiftProps)},['id','fields'])},
+ {name:'delete_shift',description:'Удалить смену по id (пользователь подтверждает в приложении).',input_schema:S({id:str},['id'])},
+ {name:'get_transactions',description:'Доходы и расходы (не смены) с фильтрами.',input_schema:S({from:date,to:date,type:{type:'string',enum:['income','expense']},category:str})},
+ {name:'add_transaction',description:'Добавить доход или расход.',input_schema:S({type:{type:'string',enum:['income','expense']},category:str,amount:int,date,note:str},['type','category','amount','date'])},
+ {name:'update_transaction',description:'Изменить транзакцию по id.',input_schema:S({id:str,fields:S({type:str,category:str,amount:int,date,note:str})},['id','fields'])},
+ {name:'delete_transaction',description:'Удалить транзакцию по id (с подтверждением).',input_schema:S({id:str},['id'])},
+ {name:'get_motorcycle',description:'Одометр, расходники со статусом, последние ремонты и заправки.',input_schema:S({})},
+ {name:'update_odometer',description:'Записать текущий пробег по приборке.',input_schema:S({odo:int},['odo'])},
+ {name:'add_maintenance',description:'Записать обслуживание/ремонт. Если название совпадает с расходником — обновит его отметку замены. add_expense (по умолчанию true) добавит расход «Ремонт».',input_schema:S({name:str,date,odo:int,cost:int,note:str,add_expense:{type:'boolean'}},['name'])},
+ {name:'add_fuel',description:'Записать заправку (и расход «Топливо»).',input_schema:S({date,liters:int,cost:int,odo:int,note:str},['date','cost'])},
+ {name:'get_statistics',description:'Итоги за период: доход, расходы, чистая прибыль, заказы, км, часы, ₩/час, ₩/заказ, ₩/км, по платформам, по дням, лучший день.',input_schema:S({from:date,to:date},['from','to'])},
+ {name:'get_goals',description:'Цели, копилка, челлендж и прогресс.',input_schema:S({})},
+ {name:'update_goals',description:'Изменить цели. add_saving — пополнить копилку.',input_schema:S({monthly_goal:int,saving_goal:int,add_saving:int,challenge_orders:int,challenge_income:int})},
+ {name:'get_receipts',description:'Список чеков.',input_schema:S({})},
+ {name:'add_receipt',description:'Сохранить данные чека.',input_schema:S({vendor:str,amount:int,date,category:str,note:str},['vendor','amount','date'])},
+ {name:'get_payouts',description:'Выплаты платформ.',input_schema:S({from:date,to:date})},
+ {name:'add_payout',description:'Записать фактическую выплату от платформы (не доход).',input_schema:S({date,amount:int,platform:str,period:{type:'string',enum:['week','month','other']},from:date,to:date,note:str},['date','amount'])},
+ {name:'get_debts',description:'Долги: кому должен и кто должен мне.',input_schema:S({})},
+ {name:'add_debt',description:'Записать долг.',input_schema:S({dir:{type:'string',enum:['owe','owed']},person:str,amount:int,due:date,note:str},['dir','person','amount'])},
+ {name:'update_debt',description:'Отметить оплату долга (pay_amount) или закрыть (close=true).',input_schema:S({id:str,pay_amount:int,close:{type:'boolean'}},['id'])},
+ {name:'get_settings',description:'Ставки аренды аккаунта по платформам, налог, взносы.',input_schema:S({})}];
+
+const pick=(o,keys)=>Object.fromEntries(keys.filter(k=>o[k]!==undefined).map(k=>[k,o[k]]));
+const SHIFT_KEYS=['date','platform','orders','minutes','km','income','bonus','deduction','rent','area','note'];
+const NUMK=['orders','minutes','km','income','bonus','deduction','rent','amount'];
+function cleanFields(f,keys){let o=pick(f||{},keys);for(let k in o)if(NUMK.includes(k))o[k]=num(o[k]);return o}
+const inRange=(d,a)=>(!a.from||d>=a.from)&&(!a.to||d<=a.to);
+const validPlat=p=>PLATFORMS.some(x=>x.name===p)?p:(PLATFORMS.find(x=>x.short.toLowerCase()===String(p||'').toLowerCase()||String(p||'').toLowerCase().includes(x.short.toLowerCase()))?.name||'Другое');
+function statsFor(from,to){let sh=db.shifts.filter(x=>x.date>=from&&x.date<=to),mo=db.money.filter(x=>(x.date||'')>=from&&(x.date||'')<=to),t=totals(sh,mo);
+ let days={};sh.forEach(x=>{let d=days[x.date]??={inc:0,orders:0,min:0};d.inc+=shInc(x)-num(x.deduction)-num(x.rent);d.orders+=num(x.orders);d.min+=num(x.minutes)});
+ let best=Object.entries(days).sort((a,b)=>b[1].inc-a[1].inc)[0],pl={};sh.forEach(x=>{let p=pl[x.platform]??={income:0,orders:0,km:0,minutes:0,deduction_and_rent:0};p.income+=shInc(x);p.orders+=num(x.orders);p.km+=num(x.km);p.minutes+=num(x.minutes);p.deduction_and_rent+=num(x.deduction)+num(x.rent)});
+ for(let k in pl){let p=pl[k];p.per_hour=p.minutes?Math.round(p.income/(p.minutes/60)):null;p.per_order=p.orders?Math.round(p.income/p.orders):null}
+ let exp={};mo.filter(x=>x.type==='expense').forEach(x=>{exp[x.category]=(exp[x.category]||0)+num(x.amount)});
+ return {from,to,income_total:t.inc,expenses_total:t.exp,expenses_by_category:exp,shift_deductions:sum(sh,'deduction'),account_rent:t.rent,net_profit:t.net,orders:t.orders,km:Math.round(t.km*10)/10,hours:Math.round(t.min/6)/10,per_hour:t.min?Math.round(t.workInc/(t.min/60)):null,per_order:t.orders?Math.round(t.workInc/t.orders):null,per_km:t.km?Math.round(t.workInc/t.km):null,fuel_per_km:t.km?Math.round(sum(mo.filter(x=>x.category==='Топливо'),'amount')/t.km):null,platforms:pl,best_day:best?{date:best[0],net_after_deductions:best[1].inc,orders:best[1].orders}:null,work_days:Object.keys(days).length,shift_count:sh.length}}
+async function runTool(name,a){a=a||{};
+ switch(name){
+ case 'get_shifts':return db.shifts.filter(s=>inRange(s.date,a)&&(!a.platform||s.platform===validPlat(a.platform))).sort((x,y)=>x.date.localeCompare(y.date)).slice(-100).map(s=>({id:s.id,...pick(s,SHIFT_KEYS)}));
+ case 'add_shift':{let f=cleanFields(a,SHIFT_KEYS);f.platform=validPlat(f.platform);let dup=db.shifts.find(s=>s.date===f.date&&s.platform===f.platform&&num(s.income)===num(f.income)&&num(s.orders)===num(f.orders));
+  if(dup&&!a.force)throw Error(`Такая смена уже есть (id ${dup.id}). Не создавай дубль.`);
+  let s={id:uid(),orders:0,minutes:0,km:0,income:0,bonus:0,deduction:0,area:'',note:'',...f};if(a.rent===undefined){let pct=rentPct(s.platform);s.rent=pct?Math.round((s.income+s.bonus)*pct/100):0}
+  db.shifts.push(s);if(s.km>0)db.odo=Math.round((num(db.odo)+s.km)*10)/10;save();return {ok:true,shift:s}}
+ case 'update_shift':{let s=db.shifts.find(x=>x.id===a.id);if(!s)throw Error('Смена не найдена');let f=cleanFields(a.fields,SHIFT_KEYS);if(f.platform)f.platform=validPlat(f.platform);let before=pick(s,Object.keys(f));Object.assign(s,f);save();return {ok:true,before,after:pick(s,SHIFT_KEYS)}}
+ case 'delete_shift':{let s=db.shifts.find(x=>x.id===a.id);if(!s)throw Error('Смена не найдена');if(!confirm(`AI хочет удалить смену ${s.date} · ${platOf(s.platform).short} · ${won(shInc(s))}. Удалить?`))throw Error('Пользователь отменил удаление');db.shifts=db.shifts.filter(x=>x!==s);save();return {ok:true,deleted:pick(s,SHIFT_KEYS)}}
+ case 'get_transactions':return db.money.filter(m=>inRange(m.date||'',a)&&(!a.type||m.type===a.type)&&(!a.category||m.category===a.category)).slice(-150).map(m=>pick(m,['id','type','category','amount','date','note']));
+ case 'add_transaction':{let m={id:uid(),type:a.type==='income'?'income':'expense',category:a.category||'Другое',amount:num(a.amount),date:a.date||today(),note:a.note||''};if(m.amount<=0)throw Error('Сумма должна быть больше нуля');db.money.push(m);save();return {ok:true,transaction:m}}
+ case 'update_transaction':{let m=db.money.find(x=>x.id===a.id);if(!m)throw Error('Запись не найдена');let f=cleanFields(a.fields,['type','category','amount','date','note']);let before=pick(m,Object.keys(f));Object.assign(m,f);save();return {ok:true,before,after:m}}
+ case 'delete_transaction':{let m=db.money.find(x=>x.id===a.id);if(!m)throw Error('Запись не найдена');if(!confirm(`AI хочет удалить ${m.type==='expense'?'расход':'доход'} «${m.category}» ${won(m.amount)} от ${m.date}. Удалить?`))throw Error('Пользователь отменил удаление');db.money=db.money.filter(x=>x!==m);save();return {ok:true,deleted:m}}
+ case 'get_motorcycle':return {model:'Zontes 368G',odometer:num(db.odo),odometer_updated:db.odoDate||null,consumables:db.services.map(s=>({name:s.name,interval_km:s.interval||null,interval_months:s.months||null,last_km:s.last??null,last_date:s.lastDate||null,status:svcStatus(s).text})),repairs:db.repairs.slice(-15),fuel:db.fuel.slice(-10)};
+ case 'update_odometer':{let o=num(a.odo);if(o<=0)throw Error('Неверный пробег');let before=num(db.odo);db.odo=o;db.odoDate=today();save();return {ok:true,before,after:o,warning:o<before?'Новый пробег меньше прежнего':undefined}}
+ case 'add_maintenance':{let r={name:a.name,odo:a.odo!=null?num(a.odo):num(db.odo),cost:num(a.cost),date:a.date||today(),note:a.note||''};db.repairs.push(r);
+  let item=db.services.find(s=>s.name.toLowerCase()===String(a.name).toLowerCase())||db.services.find(s=>String(a.name).toLowerCase().includes(s.name.toLowerCase())||s.name.toLowerCase().includes(String(a.name).toLowerCase()));
+  if(item){item.last=r.odo;item.lastDate=r.date}if(r.cost&&a.add_expense!==false)db.money.push({id:uid(),type:'expense',category:'Ремонт',amount:r.cost,date:r.date,note:r.name});if(r.odo>num(db.odo)){db.odo=r.odo;db.odoDate=today()}save();return {ok:true,repair:r,consumable_updated:item?item.name:null,expense_added:!!(r.cost&&a.add_expense!==false)}}
+ case 'add_fuel':{let f={date:a.date||today(),liters:num(a.liters),cost:num(a.cost),odo:a.odo!=null?num(a.odo):num(db.odo),note:a.note||''};db.fuel.push(f);db.money.push({id:uid(),type:'expense',category:'Топливо',amount:f.cost,date:f.date,note:f.note||'Заправка'});if(f.odo>num(db.odo)){db.odo=f.odo;db.odoDate=today()}save();return {ok:true,fuel:f,expense_added:true}}
+ case 'get_statistics':return statsFor(a.from,a.to);
+ case 'get_goals':{let month=today().slice(0,7),t=totals(db.shifts.filter(x=>x.date.startsWith(month)),db.money.filter(x=>(x.date||'').startsWith(month)));return {monthly_goal:db.goal,earned_this_month:t.inc,progress_pct:db.goal?Math.round(t.inc/db.goal*100):null,saving_goal:db.savingGoal,saved:db.saved,challenge_orders:db.challengeOrders,challenge_income:db.challengeIncome}}
+ case 'update_goals':{if(a.monthly_goal!=null)db.goal=num(a.monthly_goal);if(a.saving_goal!=null)db.savingGoal=num(a.saving_goal);if(a.add_saving)db.saved+=num(a.add_saving);if(a.challenge_orders!=null)db.challengeOrders=num(a.challenge_orders);if(a.challenge_income!=null)db.challengeIncome=num(a.challenge_income);save();return {ok:true,...await runTool('get_goals')}}
+ case 'get_receipts':return db.receipts.slice(-50);
+ case 'add_receipt':{let r={vendor:a.vendor,amount:num(a.amount),date:a.date||today(),category:a.category||'Другое',note:a.note||''};db.receipts.push(r);save();return {ok:true,receipt:r,note:'Чек не создаёт расход автоматически'}}
+ case 'get_payouts':return db.payouts.filter(p=>inRange(p.date,a));
+ case 'add_payout':{let p={id:uid(),date:a.date||today(),amount:num(a.amount),platform:validPlat(a.platform),period:a.period||'other',from:a.from||'',to:a.to||'',note:a.note||''};db.payouts.push(p);save();return {ok:true,payout:p,expected_from_shifts:payoutExpected(p)}}
+ case 'get_debts':return db.debts.map(d=>({...d,left:debtLeft(d)}));
+ case 'add_debt':{let d={id:uid(),dir:a.dir==='owed'?'owed':'owe',person:a.person,amount:num(a.amount),due:a.due||'',note:a.note||'',created:today(),payments:[],closed:false};db.debts.push(d);save();return {ok:true,debt:d}}
+ case 'update_debt':{let d=db.debts.find(x=>x.id===a.id);if(!d)throw Error('Долг не найден');if(a.pay_amount){(d.payments=d.payments||[]).push({date:today(),amount:num(a.pay_amount)});if(debtLeft(d)<=0)d.closed=true}if(a.close)d.closed=true;save();return {ok:true,debt:{...d,left:debtLeft(d)}}}
+ case 'get_settings':return {account_rent_pct:db.settings.rent,tax_pct:db.settings.taxRate,insurance_pct:db.settings.insRate,platforms:PLATFORMS.map(p=>p.name)};
+ }
+ throw Error('Неизвестный инструмент '+name)}
+
+const TOOL_LABEL={add_shift:'Смена добавлена',update_shift:'Смена изменена',delete_shift:'Смена удалена',add_transaction:'Запись добавлена',update_transaction:'Запись изменена',delete_transaction:'Запись удалена',update_odometer:'Одометр обновлён',add_maintenance:'Обслуживание записано',add_fuel:'Заправка записана',update_goals:'Цели обновлены',add_receipt:'Чек сохранён',add_payout:'Выплата записана',add_debt:'Долг записан',update_debt:'Долг обновлён'};
+function fmtAI(t){return esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')}
+function chatAdd(kind,html){let d=document.createElement('div');d.className=kind;d.innerHTML=html;$('#chatLog').append(d);d.scrollIntoView({block:'end',behavior:'smooth'});return d}
+function aiShow(){let has=!!lsGet(AI_KEY);$('#aiSetup').classList.toggle('hidden',has&&!aiSetupOpen);$('#aiChatCard').classList.toggle('hidden',!has);$('#aiForget').classList.toggle('hidden',!has);
+ let f=$('#aiSetupForm').elements;f.model.value=lsGet(AI_MODEL)||'claude-opus-5-5';
+ if(has&&!$('#chatLog').children.length)chatAdd('msg bot','Привет! Я RIDELOG AI. Скинь скриншот из Coupang или Baemin — запишу смену. Или напиши: «потратил 15 тысяч на бензин», «сколько я заработал за неделю?», «должен Мину 50 тысяч до пятницы».')}
+let aiSetupOpen=false;
+$('#aiSetBtn').onclick=()=>{aiSetupOpen=!aiSetupOpen;aiShow()};
+$('#aiSetupForm').addEventListener('submit',e=>{e.preventDefault();let f=e.target.elements;if(f.key.value.trim())lsSet(AI_KEY,f.key.value.trim());lsSet(AI_MODEL,f.model.value);f.key.value='';aiSetupOpen=false;aiShow();toast('Сохранено')});
+$('#aiForget').onclick=()=>{if(confirm('Удалить API-ключ с этого телефона?')){lsSet(AI_KEY,'');aiSetupOpen=false;aiShow()}};
+$('#aiNew').onclick=()=>{if(aiBusy)return;aiMsgs=[];aiImgs=[];$('#chatLog').innerHTML='';$('#aiThumbs').innerHTML='';aiShow()};
+$('#aiPhoto').onchange=async e=>{let files=[...e.target.files].slice(0,5-aiImgs.length);e.target.value='';for(let f of files){try{let url=await shrink(f,1568,.85);aiImgs.push(url)}catch(err){toast('Не удалось прочитать фото')}}$('#aiThumbs').innerHTML=aiImgs.map(u=>`<img src="${u}" alt="">`).join('')};
+$('#aiForm').addEventListener('submit',e=>{e.preventDefault();aiSend()});
+$('#aiForm textarea').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&window.matchMedia('(pointer:fine)').matches){e.preventDefault();aiSend()}});
+async function loadSDK(){if(!AnthropicSDK)AnthropicSDK=(await import('./vendor/anthropic-sdk-1.3.0.js')).Anthropic;return AnthropicSDK}
+async function aiSend(){if(aiBusy)return;let ta=$('#aiForm textarea'),q=ta.value.trim();if(!q&&!aiImgs.length)return;
+ let key=lsGet(AI_KEY);if(!key){aiSetupOpen=true;aiShow();return toast('Сначала вставь API-ключ')}
+ let wd=new Date().toLocaleDateString('ru-RU',{weekday:'long'});
+ let content=[...aiImgs.map(u=>({type:'image',source:{type:'base64',media_type:'image/jpeg',data:u.split(',')[1]}})),{type:'text',text:`[Сегодня: ${today()}, ${wd}]\n${q||'Разбери скриншот(ы) и запиши данные.'}`}];
+ chatAdd('msg user',aiImgs.map(u=>`<img src="${u}" alt="">`).join('')+esc(q||''));
+ aiMsgs.push({role:'user',content});ta.value='';aiImgs=[];$('#aiThumbs').innerHTML='';
+ aiBusy=true;$('#aiSend').disabled=true;let typing=chatAdd('typing','RIDELOG AI думает…');
+ try{await aiLoop(key)}catch(err){chatAdd('msg bot',esc(aiErr(err)));aiMsgs=aiMsgs.slice(0,-1)}
+ finally{typing.remove();aiBusy=false;$('#aiSend').disabled=false;render()}}
+function aiErr(err){let A=AnthropicSDK;if(A){if(err instanceof A.AuthenticationError)return 'Ключ API не подходит. Проверь его в ⚙.';if(err instanceof A.PermissionDeniedError)return 'У ключа нет доступа к этой модели. Выбери другую модель в ⚙.';if(err instanceof A.RateLimitError)return 'Слишком много запросов — подожди минуту и повтори.';if(err instanceof A.APIConnectionError)return 'Нет связи с сервером. Проверь интернет.';if(err instanceof A.BadRequestError)return 'Запрос отклонён: '+(err.message||'');if(err instanceof A.APIError)return 'Ошибка сервера Anthropic ('+(err.status||'?')+'). Повтори позже.'}return 'Ошибка: '+(err?.message||err)}
+async function aiLoop(key){const A=await loadSDK();const client=new A({apiKey:key,dangerouslyAllowBrowser:true});const model=lsGet(AI_MODEL)||'claude-opus-5-5';
+ for(let step=0;step<12;step++){
+  const req={model,max_tokens:16000,system:[{type:'text',text:AI_SYSTEM,cache_control:{type:'ephemeral'}}],tools:AI_TOOLS,messages:aiMsgs,output_config:{effort:'medium'}};
+  let res;
+  if(model==='claude-haiku-5-5')res=await client.messages.create(req);
+  else res=await client.beta.messages.create({...req,betas:['server-side-fallback-2026-07-01'],fallbacks:'default'});
+  for(const b of res.content)if(b.type==='text'&&b.text.trim())chatAdd('msg bot',fmtAI(b.text.trim()));
+  aiMsgs.push({role:'assistant',content:res.content});
+  if(res.stop_reason==='refusal'){chatAdd('msg bot','Этот запрос модель обработать не может. Переформулируй, пожалуйста.');return}
+  if(res.stop_reason==='max_tokens'){chatAdd('msg bot','Ответ получился слишком длинным и оборвался. Попроси короче.');return}
+  if(res.stop_reason==='pause_turn')continue;
+  if(res.stop_reason!=='tool_use')return;
+  const results=[];
+  for(const b of res.content){if(b.type!=='tool_use')continue;
+   try{const out=await runTool(b.name,b.input);results.push({type:'tool_result',tool_use_id:b.id,content:JSON.stringify(out??null)});if(TOOL_LABEL[b.name])chatAdd('tool-chip ok','✓ '+TOOL_LABEL[b.name])}
+   catch(err){results.push({type:'tool_result',tool_use_id:b.id,content:String(err.message||err),is_error:true});if(TOOL_LABEL[b.name])chatAdd('tool-chip err','✗ '+esc(err.message||String(err)))}}
+  aiMsgs.push({role:'user',content:results});
+ }
+ chatAdd('msg bot','Остановился: слишком много шагов подряд. Уточни задачу.')}
+
 /* ---------- Навигация и запуск ---------- */
-function render(){renderHome();hudUI();renderShiftHistory();renderPlaces();renderStats();renderFinance();renderBike();renderFuel();renderGoals();renderMore()}
-function go(id){if(!document.getElementById(id))id='home';try{sessionStorage.setItem('ridelog_view',id)}catch(e){}$$('.view').forEach(x=>x.classList.toggle('active',x.id===id));$$('.nav').forEach(x=>x.classList.toggle('active',x.dataset.view===id));window.scrollTo(0,0);render();if(id==='work')loadWeather()}
+function render(){renderHome();hudUI();renderShiftHistory();renderPlaces();renderStats();renderFinance();renderPayouts();renderDebts();renderBike();renderFuel();renderGoals();renderMore()}
+function go(id){if(!document.getElementById(id))id='home';try{sessionStorage.setItem('ridelog_view',id)}catch(e){}$$('.view').forEach(x=>x.classList.toggle('active',x.id===id));$$('.nav').forEach(x=>x.classList.toggle('active',x.dataset.view===id));window.scrollTo(0,0);render();if(id==='work')loadWeather();if(id==='ai')aiShow()}
 $$('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
 $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
 $$('form').forEach(f=>{let x=f.querySelector('[name=date]');if(x&&!x.value)x.value=today()});
-fillSettings();resetShiftForm();
+fillSettings();resetShiftForm();calcRent();
 $('#appVersion').textContent=APP_VERSION;$('#verPill').textContent='v'+APP_VERSION;
 let startView='home';try{startView=sessionStorage.getItem('ridelog_view')||'home'}catch(e){}
 fillPending();go(startView);
@@ -515,7 +740,7 @@ try{if(sessionStorage.getItem('ridelog_updated')){sessionStorage.removeItem('rid
 let baseHash=null,updateReady=false,swReg=null;
 async function hashText(t){try{let b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].slice(0,8).map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=0;for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;return String(h)}}
 async function fetchHash(){let r=await fetch('./index.html?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error(r.status);return hashText(await r.text())}
-function busy(){let a=document.activeElement;return !!(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))||!!$('dialog[open]')}
+function busy(){let a=document.activeElement;return !!(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))||!!$('dialog[open]')||aiBusy||aiMsgs.length>0}
 function applyUpdate(){try{sessionStorage.setItem('ridelog_updated','1')}catch(e){}persist();location.reload()}
 function showUpdateBar(){if($('#updateBar'))return;let b=document.createElement('button');b.id='updateBar';b.className='update-bar';b.textContent='⟳ Новая версия RIDELOG — нажми, чтобы обновить';b.onclick=applyUpdate;document.body.append(b)}
 async function checkUpdate(manual){

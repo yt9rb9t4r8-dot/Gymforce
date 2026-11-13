@@ -1,7 +1,7 @@
 // RIDELOG service worker.
 // Всё своё — «сначала сеть, потом кэш»: новая версия сайта приходит сразу,
 // а без интернета приложение открывается из кэша.
-const CACHE = 'ridelog-v2';
+const CACHE = 'ridelog-v2.2';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icons/apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
