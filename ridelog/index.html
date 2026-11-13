@@ -15,266 +15,507 @@
 <title>RIDELOG</title>
 <style>
 :root{--bg:#07090c;--panel:#0d1117;--panel2:#11161e;--line:#202630;--muted:#858d98;--text:#f3f5f7;--orange:#ff7900;--green:#00d889;--red:#ff526b;--radius:22px}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:94px}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:94px}
 button,input,select,textarea{font:inherit}button{cursor:pointer;color:inherit}
 .app{max-width:760px;margin:auto;min-height:100vh}
-header{position:sticky;top:0;z-index:5;background:#080a0ded;backdrop-filter:blur(18px);border-bottom:1px solid var(--line);padding:17px 18px;display:flex;align-items:center;justify-content:space-between}
+header{position:sticky;top:0;z-index:5;background:#080a0ded;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line);padding:calc(14px + env(safe-area-inset-top)) 18px 14px;display:flex;align-items:center;justify-content:space-between}
 .brand{font-size:22px;font-weight:900;letter-spacing:2px}.brand span{color:var(--orange)}.sub{font-size:10px;color:var(--muted);letter-spacing:1.6px;margin-top:3px}
-.pro{background:#2a1609;color:var(--orange);padding:8px 13px;border-radius:30px;font-weight:800}
+.pro{background:#2a1609;color:var(--orange);padding:8px 13px;border-radius:30px;font-weight:800;font-size:12px}
 main{padding:18px 15px 28px}.view{display:none}.view.active{display:block}
-.head{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 16px}.eyebrow{font-size:10px;color:var(--muted);letter-spacing:1.7px;font-weight:800}h1{font-size:26px;margin:5px 0 0}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 7px}
+.head{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 16px;gap:10px}.eyebrow{font-size:10px;color:var(--muted);letter-spacing:1.7px;font-weight:800}h1{font-size:26px;margin:5px 0 0}h2{font-size:18px;margin:0 0 12px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:17px;margin:13px 0}
 .hero{background:linear-gradient(140deg,#101b1a,#101116 68%);border:1px solid #124c3b;border-radius:25px;padding:21px;margin:12px 0}
-.hero .amount{font-size:42px;font-weight:900;letter-spacing:-1px;margin:9px 0}.green{color:var(--green)}.orange{color:var(--orange)}.red{color:var(--red)}.muted{color:var(--muted)}
+.amount{font-size:40px;font-weight:900;letter-spacing:-1px;margin:9px 0}.amount small{font-size:15px;color:var(--muted);font-weight:700}
+.green{color:var(--green)}.orange{color:var(--orange)}.red{color:var(--red)}.muted{color:var(--muted)}
 .row{display:flex;gap:10px;align-items:center;justify-content:space-between}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
-.metric{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px;min-width:0}.metric b{display:block;font-size:22px;margin:5px 0}.metric small{color:var(--muted)}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mini{background:#10151b;border:1px solid var(--line);border-radius:15px;padding:12px;text-align:center}.mini b{display:block;font-size:18px}.mini small{color:var(--muted);font-size:11px}
-.btn{border:0;border-radius:15px;padding:13px 16px;font-weight:800;background:#202630}.primary{background:var(--orange);color:#160b03}.success{background:var(--green);color:#001a10}.danger{background:#42151e;color:#ff8494}.outline{background:transparent;border:1px solid var(--line)}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:14px;min-width:0}.metric b{display:block;font-size:21px;margin:5px 0}.metric small{color:var(--muted);font-size:12px}
+.metric.good{background:#06180f;border-color:#0f4a33}.metric.good b{color:var(--green)}.metric.bad{background:#1c0b10;border-color:#4a1a24}.metric.bad b{color:var(--red)}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.mini{background:#10151b;border:1px solid var(--line);border-radius:15px;padding:12px 6px;text-align:center;min-width:0}.mini b{display:block;font-size:18px}.mini small{color:var(--muted);font-size:11px}.mini.hl{background:#1d1208;border-color:#5a3210}.mini.hl b,.mini.hl small{color:var(--orange)}
+.btn{border:0;border-radius:15px;padding:13px 16px;font-weight:800;background:#202630}.primary{background:var(--orange);color:#160b03}.success{background:var(--green);color:#001a10}.danger{background:#42151e;color:#ff8494}.outline{background:transparent;border:1px solid var(--line)}.btn:disabled{opacity:.4}
+.text-btn{border:0;background:none;color:var(--orange);font-weight:700;font-size:12px;padding:4px 2px}.text-btn.del{color:var(--red)}
 .actions{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.actions button{min-height:65px;text-align:left}.actions strong{display:block}.actions small{color:var(--muted)}
-.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:12px;color:#b4bbc5;font-weight:700}
-input,select,textarea{width:100%;background:#080b10;border:1px solid #343c47;border-radius:13px;padding:13px;color:var(--text);outline:none;min-width:0}input:focus,select:focus,textarea:focus{border-color:var(--orange)}textarea{min-height:76px;resize:vertical}
-.list{display:flex;flex-direction:column;gap:8px}.item{background:#0a0e13;border:1px solid var(--line);border-radius:14px;padding:12px}.item .right{text-align:right}.pill{font-size:11px;border-radius:20px;padding:5px 8px;background:#202630;color:#c6ccd4}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.full{grid-column:1/-1}label{font-size:12px;color:#b4bbc5;font-weight:700}
+input,select,textarea{width:100%;background:#080b10;border:1px solid #343c47;border-radius:13px;padding:13px;color:var(--text);outline:none;min-width:0;font-size:16px}input:focus,select:focus,textarea:focus{border-color:var(--orange)}textarea{min-height:76px;resize:vertical}
+.list{display:flex;flex-direction:column;gap:8px}.item{background:#0a0e13;border:1px solid var(--line);border-radius:14px;padding:12px}.item .right{text-align:right}.pill{font-size:11px;border-radius:20px;padding:5px 8px;background:#202630;color:#c6ccd4;white-space:nowrap}
 .tabs{display:flex;gap:7px;overflow:auto;padding:2px 0 9px}.tab{white-space:nowrap;border:1px solid var(--line);background:transparent;border-radius:22px;padding:9px 14px;color:var(--muted);font-weight:700}.tab.active{background:var(--orange);color:#1a0d03;border-color:var(--orange)}
-.big-timer{text-align:center;font-size:40px;font-weight:900;letter-spacing:3px;color:var(--green);padding:20px 0;text-shadow:0 0 25px #00d88955}
-.bar{height:9px;background:#252c35;border-radius:10px;overflow:hidden;margin:9px 0}.bar i{display:block;height:100%;background:var(--orange);border-radius:10px}
-.bottom{position:fixed;bottom:0;left:0;right:0;z-index:8;background:#090c11f2;border-top:1px solid var(--line);backdrop-filter:blur(16px);display:flex;justify-content:space-around;padding:9px 4px calc(9px + env(safe-area-inset-bottom));max-width:760px;margin:auto}
+.bar{height:9px;background:#252c35;border-radius:10px;overflow:hidden;margin:9px 0}.bar i{display:block;height:100%;background:var(--orange);border-radius:10px}.bar i.warn{background:var(--red)}
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:8;background:#090c11f2;border-top:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;justify-content:space-around;padding:9px 4px calc(9px + env(safe-area-inset-bottom));max-width:760px;margin:auto}
 .nav{border:0;background:none;color:#7d8590;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;min-width:42px}.nav span{font-size:21px}.nav.active{color:var(--orange)}
-.hidden{display:none!important}.notice{font-size:12px;line-height:1.5;color:var(--muted)}.section{margin-top:20px}
-.table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{text-align:left;padding:10px 5px;border-bottom:1px solid var(--line);white-space:nowrap}.table th{color:var(--muted)}
-.tag{display:inline-block;color:var(--orange);background:#2a180b;border-radius:20px;padding:5px 9px;font-size:11px}
+.hidden{display:none!important}.notice{font-size:12px;line-height:1.5;color:var(--muted)}.section{margin-top:16px}
+.tag{display:inline-block;color:var(--orange);background:#2a180b;border-radius:20px;padding:5px 9px;font-size:11px;font-weight:800;white-space:nowrap}
 hr{border:0;border-top:1px solid var(--line);margin:14px 0}
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#242c36;padding:12px 18px;border-radius:20px;z-index:20;display:none;max-width:90%;text-align:center}
-input,select,textarea{font-size:16px}
-.text-btn{border:0;background:none;color:var(--orange);font-weight:700;font-size:12px;padding:4px 2px}
-header{padding-top:calc(17px + env(safe-area-inset-top))}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#242c36;padding:12px 18px;border-radius:20px;z-index:40;display:none;max-width:90%;text-align:center}
 .update-bar{position:fixed;z-index:30;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top));background:var(--orange);color:#160b03;border:0;border-radius:16px;padding:12px 16px;font-weight:900;box-shadow:0 8px 30px #000a;max-width:92%}
-@media(min-width:600px){main{padding:24px}.stats{grid-template-columns:repeat(4,1fr)}}
+/* Экран смены */
+.hud{background:radial-gradient(circle at 50% 0,#0f2a1f,#0b0f14 62%);border:1px solid #173b2c;border-radius:26px;padding:16px;margin:10px 0}
+.hud-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:#c9d1d9}
+.hud-ctrl{display:flex;gap:8px;align-items:stretch;margin-top:14px}.hud-ctrl .sq{width:66px;border:1px solid #2a323d;background:#141a22;border-radius:14px;padding:8px 2px;font-size:11px;font-weight:700;color:#aeb6c0;display:flex;flex-direction:column;align-items:center;gap:3px}.hud-ctrl .sq span{font-size:19px}.hud-ctrl .sq.on{border-color:var(--orange);color:var(--orange)}
+.go{flex:1;border:0;border-radius:16px;font-size:20px;font-weight:900;letter-spacing:4px;background:var(--green);color:#00170d}.go.stop{background:#4a1520;color:#ff8a9a}
+.sos{border:1px solid #6b1f2c;background:#2a0d13;color:var(--red);border-radius:9px;padding:5px 10px;font-weight:900;letter-spacing:2px;font-size:12px}
+.big-timer{text-align:center;font:900 52px/1 ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:3px;color:var(--green);padding:22px 0 6px;text-shadow:0 0 24px #00d88966}
+.big-timer.paused{color:var(--orange);text-shadow:0 0 24px #ff790055}
+.state{text-align:center;letter-spacing:6px;color:var(--muted);font-weight:800;font-size:13px;margin-bottom:14px}
+.counter{display:flex;align-items:center;justify-content:center;gap:28px;margin:6px 0 16px}.counter button{width:60px;height:60px;border-radius:50%;border:1px solid #2a323d;background:#151b23;font-size:28px;font-weight:300}.counter b{display:block;font:800 64px/1 ui-monospace,"SF Mono",Menlo,monospace;min-width:110px;text-align:center}.counter small{display:block;text-align:center;color:var(--muted);font-size:11px;letter-spacing:2px;margin-top:4px}
+.floors{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin:4px 0 12px}.floors button{border:1px solid #2a323d;background:#121820;border-radius:12px;padding:12px 0;font-weight:900;color:#8f98a3;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:16px}.floors button.on{border-color:var(--green);color:var(--green);background:#06180f}
+.hud-acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.hud-acts button,.hud-acts label{border:1px solid #2a323d;background:#080b0f;border-radius:14px;padding:13px 4px;font-weight:800;font-size:13px;text-align:center;color:var(--text)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}.chips label{position:relative}.chips input{position:absolute;opacity:0;pointer-events:none}.chips span{display:block;border:1px solid #343c47;border-radius:22px;padding:10px 14px;font-size:13px;color:#c5ccd5}.chips input:checked+span{border-color:var(--orange);background:#2a1609;color:var(--orange)}
+/* Таблицы и графики */
+.tbl-wrap{overflow-x:auto;margin:0 -4px;-webkit-overflow-scrolling:touch}.table{width:100%;border-collapse:collapse;font-size:11.5px;font-variant-numeric:tabular-nums}.table th,.table td{text-align:right;padding:10px 3px;border-bottom:1px solid var(--line);white-space:nowrap}.table th:first-child,.table td:first-child{text-align:left}.table th{color:var(--muted);font-weight:700;font-size:11px}.table td.c,.table th.c{text-align:center}.table tr.empty td{color:#4c535d}.table tr.today td:first-child{color:var(--orange);font-weight:900}
+.badge{display:inline-block;border-radius:7px;padding:3px 5px;font-size:9.5px;font-weight:800}
+.chart svg{display:block;width:100%;height:auto}.chart text{fill:#858d98;font-size:10px}
+.navper{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:8px}.navper button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#080b10;font-size:20px}.navper .mid{text-align:center;flex:1}.navper b{display:block;font-size:15px}.navper select{width:auto;padding:5px 9px;font-size:12px;border-radius:20px;background:#2a1609;color:var(--orange);border-color:#5a3210;margin-top:5px}
+.plat{background:#0a0e13;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:10px}.plat.best{border-color:#5a3210;background:linear-gradient(140deg,#1d1208,#0a0e13 70%)}
+.svc-group{margin:16px 2px 8px;font-weight:800;color:#c5ccd5;font-size:14px}
+dialog{border:1px solid var(--line);border-radius:22px;background:var(--panel);color:var(--text);width:min(460px,calc(100% - 24px));padding:0}dialog::backdrop{background:#000b}
+.dlg{padding:18px;display:grid;gap:12px}.dlg h2{margin:0}
+.place{display:flex;gap:10px;align-items:center}.place img{width:56px;height:56px;object-fit:cover;border-radius:10px;flex:none}
+@media(min-width:600px){main{padding:24px}}
 </style>
 </head>
 <body><div class="app">
 <header><div><div class="brand">RIDE<span>LOG</span></div><div class="sub">YOUR WORK · YOUR MONEY · YOUR RIDE</div></div><span class="pro" id="verPill">PRIVATE</span></header>
 <main>
+
+<!-- ГЛАВНАЯ -->
 <section class="view active" id="home">
 <div class="head"><div><div class="eyebrow" id="todayLabel">TODAY</div><h1>Обзор</h1></div><span class="pill" id="dateNow"></span></div>
 <div class="hero"><div class="row"><span class="eyebrow">ЧИСТЫЙ РЕЗУЛЬТАТ СЕГОДНЯ</span><span class="tag" id="shiftBadge">СМЕНА OFF</span></div><div class="amount" id="todayNet">₩0</div><div class="muted">Доходы − расходы</div><hr><div class="row"><span>Доход <b id="todayIncome">₩0</b></span><span>Расходы <b class="orange" id="todayExpense">₩0</b></span></div></div>
-<div class="stats"><div class="metric"><small>Заказы</small><b id="todayOrders">0</b><small>сегодня</small></div><div class="metric"><small>Пробег</small><b id="todayKm">0 км</b><small>GPS / вручную</small></div><div class="metric"><small>Рабочее время</small><b id="todayHours">0 ч</b><small>сегодня</small></div><div class="metric"><small>Доход / час</small><b id="todayHourPay">₩0</b><small>сегодня</small></div></div>
-<div class="card"><h2>Быстрые действия</h2><div class="actions"><button class="btn primary" data-go="work"><strong>▶ Начать смену</strong><small>GPS и время</small></button><button class="btn" data-go="finance"><strong>＋ Добавить расход</strong><small>Учёт денег</small></button><button class="btn" data-go="fuel"><strong>⛽ Заправка</strong><small>Топливо и расход</small></button><button class="btn" data-go="bike"><strong>🔧 Обслуживание</strong><small>Zontes 368G</small></button></div></div>
-<div class="card"><div class="row"><h2>Прогноз месяца</h2><span class="tag">ESTIMATE</span></div><div class="amount orange" id="forecast">₩0</div><div class="notice">Оценка по среднему дневному доходу за текущий месяц. Не является гарантией заработка.</div></div>
+<div class="stats"><div class="metric"><small>Заказы</small><b id="todayOrders">0</b><small>сегодня</small></div><div class="metric"><small>Пробег</small><b id="todayKm">0 км</b><small>сегодня</small></div><div class="metric"><small>Рабочее время</small><b id="todayHours">0 ч</b><small>сегодня</small></div><div class="metric"><small>Доход / час</small><b id="todayHourPay">₩0</b><small>сегодня</small></div></div>
+<div class="card"><h2>Быстрые действия</h2><div class="actions"><button class="btn primary" data-go="work"><strong>▶ Смена</strong><small>Таймер, GPS, заказы</small></button><button class="btn" data-go="finance"><strong>＋ Расход</strong><small>Учёт денег</small></button><button class="btn" data-go="fuel"><strong>⛽ Заправка</strong><small>Топливо и расход</small></button><button class="btn" data-go="bike"><strong>🔧 Расходники</strong><small>Что пора менять</small></button></div></div>
+<div class="card" id="svcAlertCard"><div class="row"><h2>Пора обслужить</h2><button class="text-btn" data-go="bike">Все →</button></div><div id="svcAlerts" class="list"></div></div>
+<div class="card"><div class="row"><h2>Прогноз месяца</h2><span class="tag">ОЦЕНКА</span></div><div class="amount orange" id="forecast">₩0</div><div class="notice">Оценка по среднему дневному доходу за текущий месяц. Не является гарантией заработка.</div></div>
 <div class="card"><h2>Последние записи</h2><div id="recent" class="list muted">Пока нет записей.</div></div>
 </section>
 
+<!-- СМЕНА -->
 <section class="view" id="work">
-<div class="head"><div><div class="eyebrow">RIDE HUD · GPS TRACKING</div><h1>Работа</h1></div><span class="tag" id="workState">STANDBY</span></div>
-<div class="card"><div class="row"><span class="eyebrow">ТЕКУЩАЯ СМЕНА</span><span class="pill" id="gpsState">GPS OFF</span></div><div class="big-timer" id="timer">00:00:00</div><div class="grid3"><div class="mini"><b id="shiftKm">0.0</b><small>KM</small></div><div class="mini"><b id="shiftElapsed">00:00</b><small>ВРЕМЯ</small></div><div class="mini"><b id="gpsCount">0</b><small>GPS POINTS</small></div></div><div class="row section"><button class="btn success" id="startShift">START</button><button class="btn danger" id="stopShift" disabled>FINISH</button></div><p class="notice">На iPhone PWA не гарантирует GPS при заблокированном экране. Для точного фонового трекинга понадобится нативное приложение. Не используй телефон во время движения.</p></div>
-<div class="card"><h2>Сохранить итог смены</h2><form id="shiftForm" class="form">
-<div class="field"><label>Платформа</label><select name="platform"><option>Coupang Eats</option><option>Baemin Connect</option><option>요기요</option><option>땡겨요</option><option>Другое</option></select></div>
+<div class="hud">
+ <div class="hud-top"><span id="hudDate"></span><span id="hudWeather" class="muted"></span></div>
+ <div class="hud-ctrl"><button class="sq" id="resetShift"><span>⟲</span>Сброс</button><button class="sq" id="pauseShift"><span>☕</span>Перерыв</button><button class="go" id="goBtn">START</button></div>
+ <div style="margin-top:14px"><button class="sos" id="sosBtn">SOS</button></div>
+ <div class="big-timer" id="timer">00:00:00</div>
+ <div class="state" id="workState">STANDBY</div>
+ <div class="counter"><button id="ordMinus" aria-label="Минус заказ">−</button><div><b id="ordCount">0</b><small>ЗАКАЗОВ</small></div><button id="ordPlus" aria-label="Плюс заказ">＋</button></div>
+ <div class="grid3" style="margin-bottom:12px"><div class="mini"><b id="shiftKm">0.0</b><small>КМ GPS</small></div><div class="mini"><b id="gpsState">OFF</b><small>GPS</small></div><div class="mini"><b id="gpsCount">0</b><small>ТОЧЕК</small></div></div>
+ <div class="eyebrow" style="margin-bottom:6px">ГДЕ ОСТАВИЛ МОТОЦИКЛ</div>
+ <div class="floors" id="floors"><button data-floor="L">L</button><button data-floor="1F">1F</button><button data-floor="B1">B1</button><button data-floor="B2">B2</button><button data-floor="B3">B3</button><button data-floor="B4">B4</button></div>
+ <div class="hud-acts"><button id="savePlace">📍 Место</button><label>📷 Фото<input type="file" id="placePhoto" accept="image/*" capture="environment" hidden></label><button id="togglePlaces">☰ Список</button></div>
+ <div id="placesBox" class="list section hidden"></div>
+ <p class="notice">Экран не гаснет во время смены. На iPhone GPS пишет только при открытом приложении. Не пользуйся телефоном за рулём.</p>
+</div>
+
+<div class="card"><div class="row"><h2>Записать доход за смену</h2><button class="text-btn" data-go="finance">Расход →</button></div><form id="shiftForm" class="form">
+<div class="field full"><label>Платформа</label><div class="chips" id="platChips"></div></div>
 <div class="field"><label>Дата</label><input name="date" type="date" required></div>
-<div class="field"><label>Заказы</label><input name="orders" type="number" min="0" value="0"></div><div class="field"><label>Время работы (мин)</label><input name="minutes" type="number" min="0" value="0"></div>
-<div class="field"><label>Доход приложения (₩)</label><input name="income" type="number" min="0" value="0"></div><div class="field"><label>Миссии / бонусы (₩)</label><input name="bonus" type="number" min="0" value="0"></div>
-<div class="field"><label>Расстояние (км)</label><input name="km" type="number" min="0" step=".1" value="0" id="shiftKmInput"></div><div class="field"><label>Вычеты (₩)</label><input name="deduction" type="number" min="0" value="0"></div>
-<div class="field full"><label>Рабочий район</label><input name="area" placeholder="Например, Gangdong / Anyang"></div><div class="field full"><label>Заметка</label><textarea name="note" placeholder="Условия, погода, детали смены"></textarea></div>
+<div class="field"><label>Рабочий район</label><input name="area" placeholder="Gangdong…" list="areaList"><datalist id="areaList"></datalist></div>
+<div class="field"><label>Время работы (мин)</label><input name="minutes" type="number" min="0" inputmode="numeric" placeholder="0"></div><div class="field"><label>Расстояние (км)</label><input name="km" type="number" min="0" step=".1" inputmode="decimal" placeholder="0"></div>
+<div class="field full"><label>Заказы</label><input name="orders" type="number" min="0" inputmode="numeric" placeholder="0"></div>
+<div class="field full"><label>Доход по приложению (₩)</label><input name="income" type="number" min="0" inputmode="numeric" placeholder="0"></div>
+<div class="field"><label>Миссии / бонусы (₩)</label><input name="bonus" type="number" min="0" inputmode="numeric" placeholder="0"></div><div class="field"><label>Вычеты (₩)</label><input name="deduction" type="number" min="0" inputmode="numeric" placeholder="0"></div>
+<div class="field full"><label>Заметка</label><textarea name="note" placeholder="Погода, условия, детали"></textarea></div>
 <button class="btn primary full" type="submit">Сохранить смену</button></form></div>
-<div class="card"><h2>История смен</h2><div id="shiftHistory" class="list muted">Нет смен.</div></div>
+<div class="card"><h2>История смен</h2><div id="shiftHistory" class="list"></div></div>
 </section>
 
+<!-- СТАТИСТИКА -->
 <section class="view" id="stats">
 <div class="head"><div><div class="eyebrow">PERFORMANCE</div><h1>Статистика</h1></div></div>
-<div class="tabs" id="periodTabs"><button class="tab active" data-period="7">Неделя</button><button class="tab" data-period="30">Месяц</button><button class="tab" data-period="365">Год</button><button class="tab" data-period="all">Всё</button></div>
-<div class="card"><div class="eyebrow">ЧИСТЫЙ ДОХОД ЗА ПЕРИОД</div><div class="amount green" id="periodNet">₩0</div><div class="stats"><div class="metric"><small>Заказы</small><b id="periodOrders">0</b></div><div class="metric"><small>Километры</small><b id="periodKm">0</b></div><div class="metric"><small>Доход / заказ</small><b id="perOrder">₩0</b></div><div class="metric"><small>Доход / км</small><b id="perKm">₩0</b></div></div></div>
-<div class="card"><h2>Платформы — сравнение</h2><div id="platformCompare" class="list"></div></div>
-<div class="card"><h2>Доход по дням</h2><div id="dailyBars"></div></div>
+<div class="tabs" id="modeTabs"><button class="tab" data-mode="d">День</button><button class="tab active" data-mode="w">Неделя</button><button class="tab" data-mode="m">Месяц</button><button class="tab" data-mode="y">Год</button><button class="tab" data-mode="all">Всё время</button></div>
+<div class="navper" id="perNav"><button id="perPrev" aria-label="Назад">‹</button><div class="mid"><b id="perLabel"></b><select id="weekStart"><option value="1">Неделя с понедельника</option><option value="0">Неделя с воскресенья</option></select></div><button id="perNext" aria-label="Вперёд">›</button></div>
+<div class="hero"><div class="row"><span class="eyebrow green">ЧИСТАЯ ПРИБЫЛЬ</span><span class="muted" style="font-size:12px">доходы − расходы</span></div><div class="amount" id="pNet">0</div></div>
+<div class="stats"><div class="metric good"><b id="pInc">0</b><small>Доход всего (₩)</small></div><div class="metric bad"><b id="pExp">0</b><small>Расходы всего (₩)</small></div><div class="metric"><b id="pFee">0</b><small>Оплата заказов (₩)</small></div><div class="metric"><b id="pBonus">0</b><small>Миссии (₩)</small></div><div class="metric"><b id="pOrders">0</b><small>Заказов</small></div><div class="metric"><b id="pKm">0</b><small>Км</small></div><div class="metric"><b id="pTime">0</b><small>Время</small></div><div class="metric good"><b id="pHour">0</b><small>Средний доход/час (₩)</small></div></div>
+<div class="card"><h2 style="text-align:center" class="orange">Эффективность</h2><div class="grid3"><div class="mini"><b id="ePerOrder">0</b><small>₩ за заказ</small></div><div class="mini"><b id="eKmOrder">0</b><small>км на заказ</small></div><div class="mini hl"><b id="ePerKm">0</b><small>₩ за км</small></div></div></div>
+<div class="card"><h2 id="tblTitle">По дням</h2><div class="tbl-wrap"><table class="table" id="perTable"></table></div><div class="notice section" id="avgDay"></div></div>
+<div class="card chart"><h2>Доход в час (₩)</h2><div id="chartHour"></div></div>
+<div class="card chart"><h2>Заказы</h2><div id="chartOrders"></div></div>
+<div class="card"><div class="row"><h2>Сравнение платформ</h2><span class="tag">НА РУКИ</span></div><div id="platCompare" class="muted">Нет смен за период.</div><p class="notice section">«На руки» = доход − вычеты из смен − налог и страховые взносы по ставкам из «Ещё → Настройки». Это оценка, а не расчёт налоговой.</p></div>
 <div class="card"><h2>Рабочие районы</h2><div id="areaStats" class="list muted">Добавляй район в итогах смены.</div></div>
 </section>
 
+<!-- ФИНАНСЫ -->
 <section class="view" id="finance">
 <div class="head"><div><div class="eyebrow">MONEY MANAGEMENT</div><h1>Финансы</h1></div></div>
 <div class="hero"><div class="eyebrow">ОБЩИЙ БАЛАНС</div><div class="amount" id="allNet">₩0</div><div class="row"><span>Доход <b id="allIncome">₩0</b></span><span>Расход <b class="orange" id="allExpense">₩0</b></span></div></div>
 <div class="card"><h2>Новая запись</h2><form id="moneyForm" class="form">
-<div class="field"><label>Тип</label><select name="type"><option value="expense">Расход</option><option value="income">Доход</option></select></div>
-<div class="field"><label>Категория</label><select name="category"><option>Топливо</option><option>Еда</option><option>Парковка</option><option>Мойка</option><option>Ремонт</option><option>Масло / детали</option><option>Аренда</option><option>Телефон</option><option>Страховка</option><option>Доход Coupang</option><option>Доход Baemin</option><option>Бонус / миссия</option><option>Другое</option></select></div>
-<div class="field"><label>Сумма (₩)</label><input name="amount" type="number" min="1" required placeholder="15000"></div><div class="field"><label>Дата</label><input name="date" type="date" required></div>
+<div class="field"><label>Тип</label><select name="type" id="moneyType"><option value="expense">Расход</option><option value="income">Доход</option></select></div>
+<div class="field"><label>Категория</label><select name="category" id="moneyCat"></select></div>
+<div class="field"><label>Сумма (₩)</label><input name="amount" type="number" min="1" inputmode="numeric" required placeholder="15000"></div><div class="field"><label>Дата</label><input name="date" type="date" required></div>
 <div class="field full"><label>Описание</label><input name="note" placeholder="Например, бензин 5 литров"></div><button class="btn primary full">Сохранить запись</button></form></div>
 <div class="card"><h2>История финансов</h2><div class="tabs"><button class="tab active" data-filter="all">Все</button><button class="tab" data-filter="income">Доходы</button><button class="tab" data-filter="expense">Расходы</button></div><div id="moneyHistory" class="list"></div></div>
-<div class="card"><h2>Постоянные платежи</h2><form id="billForm" class="form"><div class="field"><label>Платёж</label><input name="name" required placeholder="Телефон, аренда..."></div><div class="field"><label>Сумма ₩</label><input name="amount" type="number" required min="1"></div><div class="field"><label>День месяца</label><input name="day" type="number" min="1" max="31" value="1"></div><button class="btn primary">Добавить</button></form><div id="bills" class="list section"></div></div>
+<div class="card"><h2>Постоянные платежи</h2><form id="billForm" class="form"><div class="field"><label>Платёж</label><input name="name" required placeholder="Телефон, аренда..."></div><div class="field"><label>Сумма ₩</label><input name="amount" type="number" inputmode="numeric" required min="1"></div><div class="field"><label>День месяца</label><input name="day" type="number" min="1" max="31" value="1"></div><button class="btn primary">Добавить</button></form><div id="bills" class="list section"></div></div>
 </section>
 
+<!-- МОТО -->
 <section class="view" id="bike">
 <div class="head"><div><div class="eyebrow">MOTORCYCLE CARE</div><h1>Zontes 368G</h1></div><span class="tag">GARAGE</span></div>
-<div class="hero"><div class="eyebrow">ОДОМЕТР</div><div class="amount" id="odoValue">0 <small>км</small></div><form id="odoForm" class="row"><input name="odo" type="number" min="0" placeholder="Ввести текущий KM" required><button class="btn primary">Сохранить</button></form></div>
-<div class="card"><h2>Контроль расходников</h2><p class="notice">Интервалы примерные и редактируемые. Сверяйся с руководством Zontes и фактическим состоянием деталей.</p><form id="serviceForm" class="form"><div class="field"><label>Деталь / работа</label><input name="name" required placeholder="Например, моторное масло"></div><div class="field"><label>Интервал км</label><input name="interval" type="number" min="1" required placeholder="3000"></div><div class="field"><label>Последняя замена при KM</label><input name="last" type="number" min="0" required></div><div class="field"><label>Стоимость ₩</label><input name="cost" type="number" min="0" value="0"></div><button class="btn primary full">Добавить интервал</button></form><div id="serviceList" class="list section"></div></div>
-<div class="card"><h2>История ремонта</h2><form id="repairForm" class="form"><div class="field"><label>Что сделано</label><input name="name" required placeholder="Замена задней шины"></div><div class="field"><label>Пробег KM</label><input name="odo" type="number" min="0" required></div><div class="field"><label>Стоимость ₩</label><input name="cost" type="number" min="0" value="0"></div><div class="field"><label>Дата</label><input name="date" type="date" required></div><button class="btn primary full">Записать ремонт</button></form><div id="repairHistory" class="list section"></div></div>
-<div class="card"><h2>Стоимость владения</h2><div class="stats"><div class="metric"><small>Расходы на мото</small><b id="bikeCosts">₩0</b></div><div class="metric"><small>Расход на 1 км</small><b id="costPerKm">₩0</b></div></div></div>
+<div class="hero"><div class="eyebrow">ОДОМЕТР</div><div class="amount" id="odoValue">0 <small>км</small></div><form id="odoForm" class="row"><input name="odo" type="number" min="0" inputmode="numeric" placeholder="Текущий км по приборке" required><button class="btn primary">Сохранить</button></form><p class="notice" id="odoNote"></p></div>
+<div class="card"><div class="row"><h2>Расходники</h2><button class="text-btn" id="addSvc">＋ Свой пункт</button></div><p class="notice">Введи пробег по приборке — статус пересчитается. Нажми на пункт, чтобы изменить интервал. Интервалы примерные: сверяйся с сервисной книжкой Zontes и состоянием деталей.</p><div id="serviceList"></div><button class="btn outline section" id="addTemplates" style="width:100%">Добавить стандартный список расходников</button></div>
+<div class="card"><h2>История ремонта</h2><form id="repairForm" class="form"><div class="field"><label>Что сделано</label><input name="name" required placeholder="Замена задней шины"></div><div class="field"><label>Пробег KM</label><input name="odo" type="number" min="0" inputmode="numeric" required></div><div class="field"><label>Стоимость ₩</label><input name="cost" type="number" min="0" inputmode="numeric" value="0"></div><div class="field"><label>Дата</label><input name="date" type="date" required></div><button class="btn primary full">Записать ремонт</button></form><div id="repairHistory" class="list section"></div></div>
+<div class="card"><h2>Стоимость владения</h2><div class="stats"><div class="metric"><small>Расходы на ремонт</small><b id="bikeCosts">₩0</b></div><div class="metric"><small>Ремонт на 1 км</small><b id="costPerKm">₩0</b></div></div></div>
 </section>
 
 <section class="view" id="fuel">
-<div class="head"><div><div class="eyebrow">FUEL INTELLIGENCE</div><h1>Топливо</h1></div></div>
-<div class="card"><h2>Добавить заправку</h2><form id="fuelForm" class="form"><div class="field"><label>Дата</label><input name="date" type="date" required></div><div class="field"><label>Пробег одометра KM</label><input name="odo" type="number" min="0" required></div><div class="field"><label>Литры</label><input name="liters" type="number" min=".1" step=".01" required></div><div class="field"><label>Цена ₩</label><input name="cost" type="number" min="1" required></div><div class="field full"><label>Заправка / заметка</label><input name="note" placeholder="GS Caltex..."></div><button class="btn primary full">Сохранить заправку</button></form></div>
+<div class="head"><div><div class="eyebrow">FUEL INTELLIGENCE</div><h1>Топливо</h1></div><button class="text-btn" data-go="more">← Ещё</button></div>
+<div class="card"><h2>Добавить заправку</h2><form id="fuelForm" class="form"><div class="field"><label>Дата</label><input name="date" type="date" required></div><div class="field"><label>Пробег одометра KM</label><input name="odo" type="number" min="0" inputmode="numeric" required></div><div class="field"><label>Литры</label><input name="liters" type="number" min=".1" step=".01" inputmode="decimal" required></div><div class="field"><label>Цена ₩</label><input name="cost" type="number" min="1" inputmode="numeric" required></div><div class="field full"><label>Заправка / заметка</label><input name="note" placeholder="GS Caltex..."></div><button class="btn primary full">Сохранить заправку</button></form></div>
 <div class="stats"><div class="metric"><small>Средний расход</small><b id="fuelEfficiency">—</b><small>л / 100 км</small></div><div class="metric"><small>Средняя цена</small><b id="fuelPrice">₩—</b><small>за литр</small></div></div>
 <div class="card"><h2>История заправок</h2><div id="fuelHistory" class="list"></div></div>
 </section>
 
 <section class="view" id="goals">
-<div class="head"><div><div class="eyebrow">GOALS & SAVINGS</div><h1>Цели</h1></div></div>
-<div class="card"><h2>Цель заработка</h2><form id="goalForm" class="form"><div class="field"><label>Цель на месяц ₩</label><input name="target" type="number" min="1" required placeholder="3000000"></div><div class="field"><label>Цель накоплений ₩</label><input name="saving" type="number" min="0" value="0"></div><button class="btn primary full">Сохранить цели</button></form><div class="section"><div class="row"><span>Прогресс месячной цели</span><b id="goalProgress">0%</b></div><div class="bar"><i id="goalBar" style="width:0%"></i></div><p class="notice" id="goalText">Установи цель, чтобы видеть прогресс.</p></div></div>
-<div class="card"><h2>Копилка</h2><form id="savingForm" class="row"><input name="amount" type="number" min="1" placeholder="Сумма ₩" required><button class="btn primary">Добавить</button></form><div class="amount green" id="savedTotal">₩0</div><div class="notice">Ручной учёт накоплений. Пополнения не меняют доходы и расходы.</div></div>
-<div class="card"><h2>Ежедневный челлендж</h2><p class="muted">Выполни дневную цель по заказам и заработку.</p><div class="stats"><div class="metric"><small>Цель заказов</small><b id="challengeOrders">20</b></div><div class="metric"><small>Цель дохода</small><b id="challengeIncome">₩150,000</b></div></div><button class="btn outline" id="editChallenge">Изменить челлендж</button></div>
+<div class="head"><div><div class="eyebrow">GOALS & SAVINGS</div><h1>Цели</h1></div><button class="text-btn" data-go="more">← Ещё</button></div>
+<div class="card"><h2>Цель заработка</h2><form id="goalForm" class="form"><div class="field"><label>Цель на месяц ₩</label><input name="target" type="number" min="1" inputmode="numeric" required placeholder="3000000"></div><div class="field"><label>Цель накоплений ₩</label><input name="saving" type="number" min="0" inputmode="numeric" value="0"></div><button class="btn primary full">Сохранить цели</button></form><div class="section"><div class="row"><span>Прогресс месячной цели</span><b id="goalProgress">0%</b></div><div class="bar"><i id="goalBar" style="width:0%"></i></div><p class="notice" id="goalText">Установи цель, чтобы видеть прогресс.</p></div></div>
+<div class="card"><h2>Копилка</h2><form id="savingForm" class="row"><input name="amount" type="number" min="1" inputmode="numeric" placeholder="Сумма ₩" required><button class="btn primary">Добавить</button></form><div class="amount green" id="savedTotal">₩0</div><div class="notice" id="savingText"></div></div>
+<div class="card"><h2>Ежедневный челлендж</h2><div class="stats"><div class="metric"><small>Заказы сегодня</small><b id="challengeOrders">0 / 20</b></div><div class="metric"><small>Доход сегодня</small><b id="challengeIncome">₩0</b></div></div><form id="challengeForm" class="form"><div class="field"><label>Цель заказов в день</label><input name="orders" type="number" min="0" inputmode="numeric"></div><div class="field"><label>Цель дохода в день ₩</label><input name="income" type="number" min="0" inputmode="numeric"></div><button class="btn outline full">Сохранить челлендж</button></form></div>
 </section>
 
 <section class="view" id="more">
 <div class="head"><div><div class="eyebrow">TOOLS & PRIVACY</div><h1>Ещё</h1></div></div>
-<div class="card"><h2>Календарь работы</h2><div class="row"><button class="btn outline" id="prevMonth">‹</button><b id="monthTitle">Месяц</b><button class="btn outline" id="nextMonth">›</button></div><div id="calendar" class="stats section"></div><div id="calendarDay" class="notice"></div></div>
-<div class="card"><h2>Чеки и документы</h2><p class="notice">Добавляй сумму, категорию и описание чека. Фотография хранится только в памяти браузера, если не экспортировать её отдельно.</p><form id="receiptForm" class="form"><div class="field"><label>Магазин / сервис</label><input name="vendor" required></div><div class="field"><label>Сумма ₩</label><input name="amount" type="number" min="1" required></div><div class="field"><label>Дата</label><input name="date" type="date" required></div><div class="field"><label>Категория</label><select name="category"><option>Топливо</option><option>Ремонт</option><option>Покупка</option><option>Другое</option></select></div><div class="field full"><label>Комментарий</label><input name="note"></div><button class="btn primary full">Сохранить данные чека</button></form><div id="receiptList" class="list section"></div></div>
-<div class="card"><h2>RIDELOG Intelligence</h2><p class="notice">Локальный аналитик анализирует твои записи, находит доход/час, расходы, топ-платформу и прогноз. Это не подключённая облачная AI-модель.</p><button class="btn primary" id="runAI">Сформировать анализ</button><div id="aiOutput" class="section muted"></div></div>
-<div class="card"><h2>Обновления</h2><div class="row"><span class="muted">Версия <b id="appVersion"></b></span><button class="btn outline" id="checkUpdate">Проверить обновления</button></div><p class="notice" id="updateStatus">Приложение само проверяет обновления при каждом открытии и каждые 5 минут. Новая версия ставится без выхода из приложения — данные и активная смена сохраняются.</p></div>
-<div class="card"><h2>Резервная копия и приватность</h2><div class="list"><button class="btn outline" id="export">Экспортировать все данные JSON</button><label class="btn outline" style="text-align:center">Импортировать резервную копию<input id="import" type="file" accept="application/json" hidden></label><button class="btn danger" id="wipe">Удалить все данные</button></div><p class="notice">RIDELOG хранит данные локально на этом устройстве. Для синхронизации и защищённого входа нужен сервер и авторизация. Не публикуй личные данные в открытом репозитории.</p></div>
+<div class="actions"><button class="btn" data-go="goals"><strong>🎯 Цели</strong><small>План и копилка</small></button><button class="btn" data-go="fuel"><strong>⛽ Топливо</strong><small>Заправки, л/100 км</small></button></div>
+<div class="card"><h2>Календарь работы</h2><div class="row"><button class="btn outline" id="prevMonth">‹</button><b id="monthTitle">Месяц</b><button class="btn outline" id="nextMonth">›</button></div><div id="calendar" class="section" style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px"></div><div id="calendarDay" class="notice section"></div></div>
+<div class="card"><h2>Настройки</h2><form id="settingsForm" class="form"><div class="field"><label>Налог с дохода, %</label><input name="taxRate" type="number" min="0" max="50" step=".1" inputmode="decimal"></div><div class="field"><label>Страховые взносы, %</label><input name="insRate" type="number" min="0" max="20" step=".01" inputmode="decimal"></div><label class="full row" style="justify-content:flex-start;gap:10px"><input type="checkbox" name="weather" style="width:22px;height:22px;flex:none"> Погода на экране смены (сервис open-meteo.com получает примерные координаты)</label><button class="btn primary full">Сохранить</button></form><p class="notice">Ставки нужны для оценки «на руки» в сравнении платформ. Сверь их с выпиской платформы.</p></div>
+<div class="card"><h2>Чеки и документы</h2><form id="receiptForm" class="form"><div class="field"><label>Магазин / сервис</label><input name="vendor" required></div><div class="field"><label>Сумма ₩</label><input name="amount" type="number" min="1" inputmode="numeric" required></div><div class="field"><label>Дата</label><input name="date" type="date" required></div><div class="field"><label>Категория</label><select name="category"><option>Топливо</option><option>Ремонт</option><option>Покупка</option><option>Другое</option></select></div><div class="field full"><label>Комментарий</label><input name="note"></div><button class="btn primary full">Сохранить данные чека</button></form><div id="receiptList" class="list section"></div></div>
+<div class="card"><h2>RIDELOG Intelligence</h2><p class="notice">Локальный аналитик по твоим записям. Это не облачная AI-модель.</p><button class="btn primary" id="runAI">Сформировать анализ</button><div id="aiOutput" class="section list"></div></div>
+<div class="card"><h2>Обновления</h2><div class="row"><span class="muted">Версия <b id="appVersion"></b></span><button class="btn outline" id="checkUpdate">Проверить</button></div><p class="notice" id="updateStatus">Приложение само проверяет обновления при открытии и каждые 5 минут. Новая версия ставится без выхода из приложения — данные и активная смена сохраняются.</p></div>
+<div class="card"><h2>Резервная копия и приватность</h2><div class="list"><button class="btn outline" id="export">Экспортировать все данные JSON</button><label class="btn outline" style="text-align:center">Импортировать резервную копию<input id="import" type="file" accept="application/json,.json" hidden></label><button class="btn danger" id="wipe">Удалить все данные</button></div><p class="notice">Данные хранятся только на этом устройстве. Регулярно делай резервную копию.</p></div>
 </section>
 </main>
 <nav class="bottom">
-<button class="nav active" data-view="home"><span>⌂</span>Главная</button><button class="nav" data-view="work"><span>➤</span>Работа</button><button class="nav" data-view="stats"><span>▥</span>Статистика</button><button class="nav" data-view="finance"><span>₩</span>Финансы</button><button class="nav" data-view="bike"><span>🔧</span>Мото</button><button class="nav" data-view="more"><span>☰</span>Ещё</button>
+<button class="nav active" data-view="home"><span>⌂</span>Главная</button><button class="nav" data-view="work"><span>➤</span>Смена</button><button class="nav" data-view="stats"><span>▥</span>Статистика</button><button class="nav" data-view="finance"><span>₩</span>Финансы</button><button class="nav" data-view="bike"><span>🔧</span>Мото</button><button class="nav" data-view="more"><span>☰</span>Ещё</button>
 </nav></div><div class="toast" id="toast"></div>
+
+<dialog id="svcDlg"><form method="dialog" class="dlg" id="svcForm">
+<div class="row"><h2 id="svcTitle">Расходник</h2><button class="text-btn" value="cancel" formnovalidate style="font-size:24px">×</button></div>
+<input type="hidden" name="idx"><input type="hidden" name="mode">
+<div class="field"><label>Название</label><input name="name" required></div>
+<div class="form"><div class="field"><label>Интервал, км</label><input name="interval" type="number" min="0" inputmode="numeric" placeholder="3000"></div><div class="field"><label>Интервал, месяцев</label><input name="months" type="number" min="0" inputmode="numeric" placeholder="—"></div>
+<div class="field"><label id="svcLastLbl">Последняя замена, км</label><input name="last" type="number" min="0" inputmode="numeric"></div><div class="field"><label>Дата</label><input name="lastDate" type="date"></div>
+<div class="field" id="svcCostF"><label>Стоимость ₩</label><input name="cost" type="number" min="0" inputmode="numeric" placeholder="0"></div><div class="field"><label>Группа</label><select name="group"><option>Двигатель и привод</option><option>Тормоза и ходовая</option><option>Электрика и впуск</option><option>Другое</option></select></div></div>
+<div class="field"><label>Подсказка</label><input name="hint" placeholder="Например, синтетика"></div>
+<div class="row"><button class="btn danger" value="delete" id="svcDelete" formnovalidate>Удалить</button><button class="btn primary" value="save" style="flex:1">Сохранить</button></div>
+</form></dialog>
+
+<dialog id="sosDlg"><div class="dlg">
+<div class="row"><h2 class="red">SOS</h2><button class="text-btn" id="sosClose" style="font-size:24px">×</button></div>
+<a class="btn danger" href="tel:119" style="text-align:center;text-decoration:none;font-size:18px">📞 119 — скорая / пожарные</a>
+<a class="btn outline" href="tel:112" style="text-align:center;text-decoration:none;color:var(--text)">📞 112 — полиция</a>
+<div class="item"><div class="eyebrow">МОИ КООРДИНАТЫ</div><div id="sosCoords" style="margin:6px 0;font-weight:700">определяю…</div><div class="row"><button class="btn outline" id="sosCopy">Скопировать</button><a class="btn outline" id="sosMap" target="_blank" rel="noopener" style="text-decoration:none;color:var(--text)">Карта</a></div></div>
+<p class="notice">Назови диспетчеру адрес или продиктуй координаты.</p>
+</div></dialog>
+
 <script>
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='2.0.1';
+'use strict';
+const APP_VERSION='2.1.0';
 const KEY='ridelog_v2', OLD_KEY='ridelog_private_v1';
-const localDate=d=>d.toLocaleDateString('en-CA'); // YYYY-MM-DD по местному времени (не UTC)
-const today=()=>localDate(new Date()), won=n=>'₩'+Math.round(Number(n)||0).toLocaleString('ko-KR');
-const blank={shifts:[],money:[],services:[],repairs:[],fuel:[],bills:[],receipts:[],odo:0,goal:0,savingGoal:0,saved:0,challengeOrders:20,challengeIncome:150000};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const localDate=d=>d.toLocaleDateString('en-CA'); // YYYY-MM-DD по местному времени
+const today=()=>localDate(new Date());
+const parseD=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
+const won=n=>'₩'+Math.round(Number(n)||0).toLocaleString('ko-KR');
+const fmtN=n=>Math.round(Number(n)||0).toLocaleString('ko-KR');
+const num=v=>Number(v)||0;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toast(t){let x=$('#toast');x.textContent=t;x.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>x.style.display='none',2600)}
+const sum=(a,f)=>a.reduce((v,x)=>v+(typeof f==='function'?f(x):num(x[f])),0);
+const fmtMin=m=>{m=Math.round(m);if(!m)return '—';const h=Math.floor(m/60),mm=m%60;return h?`${h}ч ${String(mm).padStart(2,'0')}м`:`${mm}м`};
+
+const PLATFORMS=[{name:'Coupang Eats',short:'Coupang',color:'#1e8fd6'},{name:'Baemin Connect',short:'Baemin',color:'#2ac1bc'},{name:'요기요',short:'Yogiyo',color:'#fa0050'},{name:'땡겨요',short:'Ddangyo',color:'#ff8a00'},{name:'Другое',short:'Другое',color:'#6b7480'}];
+const platOf=n=>PLATFORMS.find(p=>p.name===n)||{name:n,short:n||'—',color:'#6b7480'};
+const badge=n=>{const p=platOf(n);return `<span class="badge" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color}66">${esc(p.short)}</span>`};
+const EXP_CATS=['Топливо','Еда','Парковка','Мойка','Ремонт','Масло / детали','Аренда','Телефон','Страховка','Сигареты','Другое'];
+const INC_CATS=['Доход Coupang','Доход Baemin','Бонус / миссия','Другая работа','Другое'];
+
+/* ---------- Хранилище ---------- */
+const blank={shifts:[],money:[],services:[],repairs:[],fuel:[],bills:[],receipts:[],places:[],odo:0,odoDate:'',goal:0,savingGoal:0,saved:0,challengeOrders:20,challengeIncome:150000,activeShift:null,pendingShift:null,floor:'',settings:{taxRate:3.3,insRate:0,weekStart:1,weather:false}};
 const fresh=()=>JSON.parse(JSON.stringify(blank));
-function normalize(x){let d={...fresh(),...(x&&typeof x==='object'?x:{})};for(let k of Object.keys(blank))if(Array.isArray(blank[k])&&!Array.isArray(d[k]))d[k]=[];return d}
-// Перенос данных из версии 0.x (ключ ridelog_private_v1) — один раз, старые данные не удаляются.
+function normalize(x){let d={...fresh(),...(x&&typeof x==='object'?x:{})};for(let k of Object.keys(blank))if(Array.isArray(blank[k])&&!Array.isArray(d[k]))d[k]=[];d.settings={...blank.settings,...(d.settings||{})};
+ d.shifts.forEach(s=>{s.id=s.id||uid()});d.money.forEach(m=>{m.id=m.id||uid()});d.services.forEach(s=>{s.id=s.id||uid();s.group=s.group||'Другое'});return d}
+// Перенос из версии 0.x (ключ ridelog_private_v1), один раз; старые данные не удаляются
 function migrateOld(){let old;try{old=JSON.parse(localStorage.getItem(OLD_KEY)||'null')}catch(e){old=null}if(!old)return null;
- let d=fresh(),num=v=>Number(v)||0;
- (old.entries||[]).forEach(e=>{let cat=e.category==='Бензин'?'Топливо':e.category;d.money.push({type:e.type,category:cat,amount:num(e.amount),date:e.date,note:[e.source,e.note].filter(Boolean).join(' · ')})});
+ let d=fresh();
+ (old.entries||[]).forEach(e=>d.money.push({type:e.type,category:e.category==='Бензин'?'Топливо':e.category,amount:num(e.amount),date:e.date,note:[e.source,e.note].filter(Boolean).join(' · ')}));
  (old.shifts||[]).forEach(s=>d.shifts.push({platform:s.platform||'Другое',date:s.date,orders:num(s.orders),minutes:Math.round(num(s.duration)/60000),income:num(s.income),bonus:num(s.bonus),km:Math.round(num(s.km)*10)/10,deduction:0,area:'',note:s.note||''}));
  (old.services||[]).filter(s=>num(s.interval)>0).forEach(s=>d.services.push({name:s.name,interval:num(s.interval),last:num(s.atOdo),cost:0}));
  (old.serviceLog||[]).forEach(l=>d.repairs.push({name:l.name,odo:num(l.atOdo),cost:num(l.cost),date:l.date}));
- d.odo=num(old.odo);d.migratedFrom='0.x';return d}
+ d.odo=num(old.odo);return d}
 let db,migrated=false;
 try{let raw=localStorage.getItem(KEY);if(raw)db=normalize(JSON.parse(raw));else{let m=migrateOld();db=normalize(m);migrated=!!m;if(m)localStorage.setItem(KEY,JSON.stringify(db))}}catch(e){db=fresh()}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('Не удалось сохранить: память браузера заполнена')}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('Не удалось сохранить: память заполнена. Удали старые фото мест.')}}
 function save(){persist();render()}
-function toast(t){let x=$('#toast');x.textContent=t;x.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>x.style.display='none',2600)}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function dateInput(form){let x=form.querySelector('[name=date]');if(x&&!x.value)x.value=today()}
-function sum(a,k){return a.reduce((v,x)=>v+(Number(x[k])||0),0)}
-function dateRange(days){let d=new Date();d.setDate(d.getDate()-days+1);return localDate(d)}
-function inRange(d,days){return days==='all'||d>=dateRange(Number(days))}
-function shiftsToday(){return db.shifts.filter(x=>x.date===today())}
-function moneyToday(type){return sum(db.money.filter(x=>x.date===today()&&(!type||x.type===type)),'amount')}
-function totalIncome(){return sum(db.shifts,'income')+sum(db.shifts,'bonus')+sum(db.money.filter(x=>x.type==='income'),'amount')}
-function totalExpense(){return sum(db.money.filter(x=>x.type==='expense'),'amount')+sum(db.shifts,'deduction')}
+
+/* ---------- Расчёты ---------- */
+const shInc=s=>num(s.income)+num(s.bonus);
+function totals(shifts,money){const fee=sum(shifts,'income'),bonus=sum(shifts,'bonus'),otherInc=sum(money.filter(x=>x.type==='income'),'amount'),exp=sum(money.filter(x=>x.type==='expense'),'amount')+sum(shifts,'deduction');
+ return {fee,bonus,inc:fee+bonus+otherInc,exp,net:fee+bonus+otherInc-exp,orders:sum(shifts,'orders'),km:sum(shifts,'km'),min:sum(shifts,'minutes'),workInc:fee+bonus}}
+const inR=(d,from,to)=>d>=from&&d<=to;
+
+/* ---------- Главная ---------- */
 function renderHome(){
-let sh=shiftsToday(),orders=sum(sh,'orders'),km=sum(sh,'km'),mins=sum(sh,'minutes'),inc=sum(sh,'income')+sum(sh,'bonus')+moneyToday('income'),exp=moneyToday('expense'),net=inc-exp;
-$('#todayNet').textContent=won(net);$('#todayIncome').textContent=won(inc);$('#todayExpense').textContent=won(exp);$('#todayOrders').textContent=orders;$('#todayKm').textContent=km.toFixed(1)+' км';$('#todayHours').textContent=(mins/60).toFixed(1)+' ч';$('#todayHourPay').textContent=won(mins?inc/(mins/60):0);
-$('#dateNow').textContent=today();$('#todayLabel').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long'}).toUpperCase();
-let month=today().slice(0,7), days=new Date().getDate(), msum=sum(db.shifts.filter(x=>x.date.startsWith(month)),'income')+sum(db.shifts.filter(x=>x.date.startsWith(month)),'bonus')+sum(db.money.filter(x=>x.date.startsWith(month)&&x.type==='income'),'amount'), forecast=days?msum/new Date().getDate()*new Date(new Date().getFullYear(),new Date().getMonth()+1,0).getDate():0;
-$('#forecast').textContent=won(forecast);
-let recent=[...db.shifts.map(x=>({...x,label:'Смена · '+x.platform,amount:Number(x.income)+Number(x.bonus)})),...db.money.map(x=>({...x,label:x.category,amount:x.type==='expense'?-x.amount:x.amount}))].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,5);
-$('#recent').innerHTML=recent.length?recent.map(x=>`<div class="item row"><div><b>${esc(x.label)}</b><div class="muted">${esc(x.date)}</div></div><b class="${x.amount<0?'orange':'green'}">${won(x.amount)}</b></div>`).join(''):'Пока нет записей.';
+ let t=totals(db.shifts.filter(x=>x.date===today()),db.money.filter(x=>x.date===today()));
+ $('#todayNet').textContent=won(t.net);$('#todayIncome').textContent=won(t.inc);$('#todayExpense').textContent=won(t.exp);$('#todayOrders').textContent=t.orders;$('#todayKm').textContent=t.km.toFixed(1)+' км';$('#todayHours').textContent=(t.min/60).toFixed(1)+' ч';$('#todayHourPay').textContent=won(t.min?t.workInc/(t.min/60):0);
+ $('#dateNow').textContent=new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'short'});$('#todayLabel').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long'}).toUpperCase();
+ let n=new Date(),month=today().slice(0,7),mt=totals(db.shifts.filter(x=>x.date.startsWith(month)),db.money.filter(x=>x.date.startsWith(month)));
+ $('#forecast').textContent=won(mt.inc/n.getDate()*new Date(n.getFullYear(),n.getMonth()+1,0).getDate());
+ let recent=[...db.shifts.map(x=>({date:x.date,label:'Смена · '+platOf(x.platform).short,amount:shInc(x)})),...db.money.map(x=>({date:x.date,label:x.category,amount:x.type==='expense'?-x.amount:+x.amount}))].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,5);
+ $('#recent').innerHTML=recent.length?recent.map(x=>`<div class="item row"><div><b>${esc(x.label)}</b><div class="muted">${esc(x.date)}</div></div><b class="${x.amount<0?'orange':'green'}">${x.amount<0?'−':'+'}${won(Math.abs(x.amount))}</b></div>`).join(''):'Пока нет записей.';
+ let due=db.services.map(s=>({s,st:svcStatus(s)})).filter(x=>x.st.frac>=.85).sort((a,b)=>b.st.frac-a.st.frac);
+ $('#svcAlertCard').classList.toggle('hidden',!due.length);
+ $('#svcAlerts').innerHTML=due.slice(0,4).map(({s,st})=>`<div class="item row"><b>${esc(s.name)}</b><span class="${st.frac>=1?'red':'orange'}" style="text-align:right">${esc(st.text)}</span></div>`).join('');
 }
-function renderStats(){
-let days=period||'7',sh=db.shifts.filter(x=>inRange(x.date,days)),money=db.money.filter(x=>inRange(x.date,days)),income=sum(sh,'income')+sum(sh,'bonus')+sum(money.filter(x=>x.type==='income'),'amount'),expense=sum(money.filter(x=>x.type==='expense'),'amount')+sum(sh,'deduction'),orders=sum(sh,'orders'),km=sum(sh,'km');
-$('#periodNet').textContent=won(income-expense);$('#periodOrders').textContent=orders;$('#periodKm').textContent=km.toFixed(1);$('#perOrder').textContent=won(orders?income/orders:0);$('#perKm').textContent=won(km?income/km:0);
-let plats={};sh.forEach(x=>{plats[x.platform]??={n:0,orders:0,km:0};plats[x.platform].n+=Number(x.income)+Number(x.bonus);plats[x.platform].orders+=Number(x.orders);plats[x.platform].km+=Number(x.km)});
-$('#platformCompare').innerHTML=Object.keys(plats).length?Object.entries(plats).sort((a,b)=>b[1].n-a[1].n).map(([p,v])=>`<div class="item row"><div><b>${esc(p)}</b><div class="muted">${v.orders} заказов · ${v.km} км</div></div><b class="orange">${won(v.n)}</b></div>`).join(''):'Нет данных за период.';
-let map={};sh.forEach(x=>{map[x.date]=(map[x.date]||0)+Number(x.income)+Number(x.bonus)});let vals=Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0])).slice(-8),max=Math.max(1,...vals.map(x=>x[1]));
-$('#dailyBars').innerHTML=vals.length?vals.map(([d,v])=>`<div class="row"><small class="muted">${d.slice(5)}</small><div style="flex:1"><div class="bar"><i style="width:${v/max*100}%"></i></div></div><b>${won(v)}</b></div>`).join(''):'Нет смен.';
-let areas={};sh.forEach(x=>{if(x.area){areas[x.area]=(areas[x.area]||0)+Number(x.income)+Number(x.bonus)}});$('#areaStats').innerHTML=Object.entries(areas).sort((a,b)=>b[1]-a[1]).map(([a,v])=>`<div class="item row"><b>${esc(a)}</b><b class="orange">${won(v)}</b></div>`).join('')||'Добавляй район в итогах смены.';
-}
-function renderFinance(){
-let inc=totalIncome(),exp=totalExpense();$('#allNet').textContent=won(inc-exp);$('#allIncome').textContent=won(inc);$('#allExpense').textContent=won(exp);
-let f=moneyFilter==='all'?db.money:db.money.filter(x=>x.type===moneyFilter);
-$('#moneyHistory').innerHTML=f.length?f.slice().reverse().map((x,i)=>`<div class="item row"><div><b>${esc(x.category)}</b><div class="muted">${esc(x.date)} · ${esc(x.note||'')}</div></div><div class="right"><b class="${x.type==='expense'?'orange':'green'}">${x.type==='expense'?'−':'+'}${won(x.amount)}</b><div><button class="text-btn" data-del-money="${db.money.indexOf(x)}">Удалить</button></div></div></div>`).join(''):'Нет финансовых записей.';
-$('#bills').innerHTML=db.bills.map((x,i)=>`<div class="item row"><div><b>${esc(x.name)}</b><div class="muted">Каждый месяц · ${x.day}-е число</div></div><div><b>${won(x.amount)}</b> <button class="text-btn" data-del-bill="${i}">×</button></div></div>`).join('')||'<span class="muted">Постоянных платежей нет.</span>';
-}
-function renderBike(){
-$('#odoValue').innerHTML=(Number(db.odo)||0).toLocaleString()+' <small>км</small>';
-$('#serviceList').innerHTML=db.services.map((x,i)=>{let left=Number(x.last)+Number(x.interval)-Number(db.odo),pct=Math.max(0,Math.min(100,(1-left/Number(x.interval))*100));return `<div class="item"><div class="row"><b>${esc(x.name)}</b><span class="${left<=0?'red':'orange'}">${left<=0?'ПОРА ПРОВЕРИТЬ':left.toLocaleString()+' км осталось'}</span></div><div class="bar"><i style="width:${pct}%"></i></div><div class="row muted"><small>Каждые ${x.interval} км · последняя отметка ${x.last} км</small><button class="text-btn" data-service-done="${i}">Отметить замену</button></div></div>`}).join('')||'<span class="muted">Добавь расходники и интервалы.</span>';
-$('#repairHistory').innerHTML=db.repairs.slice().reverse().map(x=>`<div class="item row"><div><b>${esc(x.name)}</b><div class="muted">${x.date} · ${x.odo} км</div></div><b>${won(x.cost)}</b></div>`).join('')||'<span class="muted">История пока пустая.</span>';
-let costs=sum(db.repairs,'cost')+sum(db.services,'cost');$('#bikeCosts').textContent=won(costs);$('#costPerKm').textContent=won(db.odo?costs/db.odo:0);
-}
-function renderFuel(){
-let f=db.fuel.slice().sort((a,b)=>a.odo-b.odo),lit=sum(f,'liters'),cost=sum(f,'cost'),dist=f.length>1?Number(f[f.length-1].odo)-Number(f[0].odo):0;
-$('#fuelEfficiency').textContent=dist>0?(lit/dist*100).toFixed(1):'—';$('#fuelPrice').textContent=lit?won(cost/lit):'₩—';
-$('#fuelHistory').innerHTML=f.slice().reverse().map(x=>`<div class="item row"><div><b>${x.liters} л · ${esc(x.note||'Заправка')}</b><div class="muted">${x.date} · ${x.odo} км</div></div><b>${won(x.cost)}</b></div>`).join('')||'<span class="muted">Нет заправок.</span>';
-}
-function renderGoals(){
-let month=today().slice(0,7), earned=sum(db.shifts.filter(x=>x.date.startsWith(month)),'income')+sum(db.shifts.filter(x=>x.date.startsWith(month)),'bonus')+sum(db.money.filter(x=>x.date.startsWith(month)&&x.type==='income'),'amount'),p=db.goal?Math.min(100,earned/db.goal*100):0;
-$('#goalProgress').textContent=p.toFixed(0)+'%';$('#goalBar').style.width=p+'%';$('#goalText').textContent=db.goal?`${won(earned)} из ${won(db.goal)} за этот месяц`:'Установи цель, чтобы видеть прогресс.';
-$('#savedTotal').textContent=won(db.saved);$('#challengeOrders').textContent=db.challengeOrders;$('#challengeIncome').textContent=won(db.challengeIncome);
-}
-function renderMore(){
-$('#receiptList').innerHTML=db.receipts.slice().reverse().map(x=>`<div class="item row"><div><b>${esc(x.vendor)}</b><div class="muted">${x.date} · ${esc(x.category)}</div></div><b>${won(x.amount)}</b></div>`).join('')||'<span class="muted">Чеков нет.</span>';
-let d=new Date(calYear,calMonth,1),first=(d.getDay()+6)%7,n=new Date(calYear,calMonth+1,0).getDate();$('#monthTitle').textContent=d.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
-let html=Array(first).fill('<div></div>').join('');for(let i=1;i<=n;i++){let key=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`,v=sum(db.shifts.filter(x=>x.date===key),'income')+sum(db.shifts.filter(x=>x.date===key),'bonus');html+=`<button class="btn outline" data-cal="${key}" style="padding:10px 2px;border-color:${v?'#a94e00':'var(--line)'}">${i}${v?'<small class="green"> •</small>':''}</button>`}$('#calendar').innerHTML=html;
-}
-function render(){
-renderHome();renderStats();renderFinance();renderBike();renderFuel();renderGoals();renderMore();
-}
-let period='7',moneyFilter='all',cal=new Date(),calYear=cal.getFullYear(),calMonth=cal.getMonth();
-function go(id){if(!document.getElementById(id))id='home';try{sessionStorage.setItem('ridelog_view',id)}catch(e){}$$('.view').forEach(x=>x.classList.toggle('active',x.id===id));$$('.nav').forEach(x=>x.classList.toggle('active',x.dataset.view===id));window.scrollTo(0,0);render()}
-$$('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
-$$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
-$$('#periodTabs .tab').forEach(b=>b.addEventListener('click',()=>{period=b.dataset.period;$$('#periodTabs .tab').forEach(x=>x.classList.toggle('active',x===b));renderStats()}));
-$$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{moneyFilter=b.dataset.filter;$$('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderFinance()}));
-let session=null,watch=null,tick=null,wakeLock=null;
-function fmt(ms){let s=Math.floor(ms/1000),h=String(Math.floor(s/3600)).padStart(2,'0'),m=String(Math.floor(s%3600/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');return `${h}:${m}:${ss}`}
+
+/* ---------- Смена ---------- */
+let watch=null,tick=null,wakeLock=null,placesOpen=false,lastFix=null;
+function fmt(ms){let s=Math.max(0,Math.floor(ms/1000));return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(x=>String(x).padStart(2,'0')).join(':')}
 function distance(a,b){let r=Math.PI/180,dlat=(b.lat-a.lat)*r,dlon=(b.lon-a.lon)*r,x=Math.sin(dlat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dlon/2)**2;return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
-function updateTimer(){let a=db.activeShift;if(!a)return;let elapsed=Date.now()-a.start;$('#timer').textContent=fmt(elapsed);$('#shiftElapsed').textContent=fmt(elapsed).slice(0,5)}
-function shiftUI(){let a=db.activeShift,on=!!a;$('#startShift').disabled=on;$('#stopShift').disabled=!on;$('#workState').textContent=on?'LIVE':(db.pendingShift?'FINISHED':'STANDBY');$('#shiftBadge').textContent=on?'СМЕНА LIVE':'СМЕНА OFF';if(on){$('#shiftKm').textContent=a.km.toFixed(1);$('#gpsCount').textContent=a.points;$('#shiftKmInput').value=a.km.toFixed(1);updateTimer()}}
-async function keepAwake(){try{if('wakeLock'in navigator&&document.visibilityState==='visible')wakeLock=await navigator.wakeLock.request('screen')}catch(e){}}
-function startTracking(){let a=db.activeShift;if(!a)return;clearInterval(tick);tick=setInterval(updateTimer,1000);shiftUI();keepAwake();
- if(!navigator.geolocation){$('#gpsState').textContent='NO GPS';return}
- $('#gpsState').textContent='GPS…';
- watch=navigator.geolocation.watchPosition(pos=>{let a=db.activeShift;if(!a)return;let p={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy,t:pos.timestamp};
-  if(p.acc>=70){$('#gpsState').textContent='GPS СЛАБЫЙ';return}$('#gpsState').textContent='GPS ACTIVE';
+function workedMs(a){if(!a)return db.pendingShift?num(db.pendingShift.minutes)*60000:0;let end=a.pauseStart||Date.now();return end-a.start-num(a.pausedMs)}
+function updateTimer(){let a=db.activeShift;$('#timer').textContent=fmt(workedMs(a));$('#timer').classList.toggle('paused',!!a?.pauseStart)}
+function hudUI(){
+ let a=db.activeShift,on=!!a,paused=!!a?.pauseStart;
+ $('#goBtn').textContent=on?'FINISH':'START';$('#goBtn').classList.toggle('stop',on);
+ $('#pauseShift').disabled=!on;$('#pauseShift').classList.toggle('on',paused);$('#pauseShift').innerHTML=paused?'<span>▶</span>Дальше':'<span>☕</span>Перерыв';
+ $('#workState').textContent=on?(paused?'ПЕРЕРЫВ':'В РАБОТЕ'):(db.pendingShift?'ЗАПИШИ ДОХОД':'STANDBY');
+ $('#workState').style.color=on&&!paused?'var(--green)':(paused||db.pendingShift)?'var(--orange)':'';
+ $('#shiftBadge').textContent=on?(paused?'ПЕРЕРЫВ':'СМЕНА LIVE'):'СМЕНА OFF';
+ $('#ordCount').textContent=on?num(a.orders):num(db.pendingShift?.orders);
+ $('#shiftKm').textContent=(on?a.km:num(db.pendingShift?.km)).toFixed(1);$('#gpsCount').textContent=on?a.points:0;
+ if(!on)$('#gpsState').textContent='OFF';
+ $$('#floors button').forEach(b=>b.classList.toggle('on',b.dataset.floor===db.floor));
+ updateTimer();
+ $('#hudDate').textContent=new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',weekday:'short'});
+}
+async function keepAwake(){try{if('wakeLock'in navigator&&document.visibilityState==='visible'&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}}catch(e){}}
+function startTracking(){let a=db.activeShift;if(!a)return;clearInterval(tick);tick=setInterval(updateTimer,1000);hudUI();keepAwake();
+ if(watch!==null)return;
+ if(!navigator.geolocation){$('#gpsState').textContent='НЕТ';return}
+ $('#gpsState').textContent='…';
+ watch=navigator.geolocation.watchPosition(pos=>{let a=db.activeShift;if(!a)return;let p={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy,t:pos.timestamp};lastFix=p;
+  if(p.acc>=70){$('#gpsState').textContent='СЛАБЫЙ';return}$('#gpsState').textContent='ON';
+  if(a.pauseStart){a.last=p;return} // на перерыве километры не считаем
   if(a.last){let d=distance(a.last,p),hrs=Math.max((p.t-a.last.t)/3600000,1/3600);if(d<.006)return;if(d/hrs>160)return;a.km+=d}
-  a.last=p;a.points++;persist();shiftUI()},
-  err=>{$('#gpsState').textContent=err.code===1?'НЕТ ДОСТУПА':'GPS ERROR';if(err.code===1)toast('Разреши геолокацию для Safari в настройках iPhone')},
+  a.last=p;a.points++;persist();hudUI()},
+  err=>{$('#gpsState').textContent=err.code===1?'ЗАПРЕТ':'ОШИБКА';if(err.code===1)toast('Разреши геолокацию для Safari в настройках iPhone')},
   {enableHighAccuracy:true,maximumAge:3000,timeout:20000})}
 function stopTracking(){clearInterval(tick);tick=null;if(watch!==null&&navigator.geolocation)navigator.geolocation.clearWatch(watch);watch=null;try{wakeLock&&wakeLock.release()}catch(e){}wakeLock=null}
-$('#startShift').onclick=()=>{if(db.activeShift)return;db.activeShift={start:Date.now(),km:0,points:0,last:null};db.pendingShift=null;persist();startTracking();render();toast('Смена началась')};
-$('#stopShift').onclick=()=>{let a=db.activeShift;if(!a)return;stopTracking();db.pendingShift={minutes:Math.round((Date.now()-a.start)/60000),km:Math.round(a.km*10)/10};db.activeShift=null;persist();fillPending();$('#gpsState').textContent='GPS STOP';render();$('#shiftForm').scrollIntoView({behavior:'smooth'});toast('GPS остановлен. Заполни и сохрани итог смены.')};
-function fillPending(){let p=db.pendingShift;if(!p)return;let f=$('#shiftForm');f.elements.minutes.value=p.minutes;f.elements.km.value=p.km}
-$('#shiftForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));db.shifts.push({...x,orders:+x.orders,minutes:+x.minutes,income:+x.income,bonus:+x.bonus,km:+x.km,deduction:+x.deduction});if(+x.km&&+x.km>0)db.odo=Math.round((Number(db.odo)+(+x.km))*10)/10;db.pendingShift=null;e.target.reset();e.target.elements.date.value=today();e.target.elements.orders.value=0;e.target.elements.minutes.value=0;e.target.elements.km.value=0;e.target.elements.income.value=0;e.target.elements.bonus.value=0;e.target.elements.deduction.value=0;save();toast('Смена сохранена')});
-$('#moneyForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.amount=+x.amount;db.money.push(x);e.target.reset();e.target.elements.date.value=today();save();toast('Финансовая запись сохранена')});
-$('#odoForm').addEventListener('submit',e=>{e.preventDefault();let n=+new FormData(e.target).get('odo');if(n<db.odo){toast('Новый одометр не может быть меньше предыдущего');return}db.odo=n;save();toast('Одометр обновлён')});
-$('#serviceForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));db.services.push({...x,interval:+x.interval,last:+x.last,cost:+x.cost});e.target.reset();save();toast('Интервал добавлен')});
-$('#repairForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.odo=+x.odo;x.cost=+x.cost;db.repairs.push(x);db.money.push({type:'expense',category:'Ремонт мотоцикла',amount:x.cost,date:x.date,note:x.name});e.target.reset();e.target.elements.date.value=today();save();toast('Ремонт записан')});
-$('#fuelForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.odo=+x.odo;x.liters=+x.liters;x.cost=+x.cost;db.fuel.push(x);db.money.push({type:'expense',category:'Топливо',amount:x.cost,date:x.date,note:x.note||'Заправка'});e.target.reset();e.target.elements.date.value=today();save();toast('Заправка записана')});
-$('#billForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.amount=+x.amount;x.day=+x.day;db.bills.push(x);e.target.reset();save()});
-$('#goalForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));db.goal=+x.target;db.savingGoal=+x.saving;save();toast('Цели обновлены')});
-$('#savingForm').addEventListener('submit',e=>{e.preventDefault();db.saved+=+new FormData(e.target).get('amount');e.target.reset();save();toast('Копилка пополнена')});
-$('#editChallenge').onclick=()=>{let a=prompt('Цель заказов в день',db.challengeOrders);if(a!==null&&Number(a)>=0)db.challengeOrders=Number(a);let b=prompt('Цель дохода в день (₩)',db.challengeIncome);if(b!==null&&Number(b)>=0)db.challengeIncome=Number(b);save()};
+$('#goBtn').onclick=()=>{
+ if(!db.activeShift){db.activeShift={start:Date.now(),km:0,points:0,last:null,orders:num(db.pendingShift?.orders),pausedMs:0,pauseStart:null};db.pendingShift=null;persist();startTracking();render();toast('Смена началась');return}
+ let a=db.activeShift;if(a.pauseStart){a.pausedMs+=Date.now()-a.pauseStart;a.pauseStart=null}
+ stopTracking();db.pendingShift={minutes:Math.round(workedMs(a)/60000),km:Math.round(a.km*10)/10,orders:num(a.orders),date:localDate(new Date(a.start))};db.activeShift=null;persist();fillPending();render();
+ $('#shiftForm').scrollIntoView({behavior:'smooth'});toast('Смена завершена. Впиши доход и сохрани.')};
+$('#pauseShift').onclick=()=>{let a=db.activeShift;if(!a)return;if(a.pauseStart){a.pausedMs+=Date.now()-a.pauseStart;a.pauseStart=null;toast('Работаем дальше')}else{a.pauseStart=Date.now();toast('Перерыв: таймер и км на паузе')}persist();hudUI()};
+$('#resetShift').onclick=()=>{if(!db.activeShift&&!db.pendingShift)return toast('Нечего сбрасывать');if(!confirm('Сбросить текущую смену? Таймер, заказы и км обнулятся.'))return;stopTracking();db.activeShift=null;db.pendingShift=null;persist();$('#shiftForm').reset();resetShiftForm();render();toast('Смена сброшена')};
+function bumpOrders(d){if(db.activeShift){db.activeShift.orders=Math.max(0,num(db.activeShift.orders)+d)}else{db.pendingShift=db.pendingShift||{minutes:0,km:0,orders:0,date:today()};db.pendingShift.orders=Math.max(0,num(db.pendingShift.orders)+d);fillPending()}persist();hudUI();if(navigator.vibrate)navigator.vibrate(15)}
+$('#ordPlus').onclick=()=>bumpOrders(1);$('#ordMinus').onclick=()=>bumpOrders(-1);
+function fillPending(){let p=db.pendingShift;if(!p)return;let f=$('#shiftForm').elements;f.minutes.value=p.minutes||'';f.km.value=p.km||'';f.orders.value=p.orders||'';if(p.date)f.date.value=p.date}
+
+/* Парковка и сохранённые места */
+$('#floors').onclick=e=>{let b=e.target.closest('[data-floor]');if(!b)return;db.floor=db.floor===b.dataset.floor?'':b.dataset.floor;persist();hudUI();if(db.floor)toast('Этаж парковки: '+db.floor)};
+function getPos(){return new Promise((res,rej)=>{if(!navigator.geolocation)return rej(Error('no'));navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude,lon:p.coords.longitude,acc:p.coords.accuracy,t:Date.now()}),rej,{enableHighAccuracy:true,timeout:15000,maximumAge:10000})})}
+function addPlace(extra){let p={id:uid(),at:Date.now(),floor:db.floor||'',...extra};db.places.unshift(p);db.places=db.places.slice(0,30);
+ let withPhoto=0;db.places.forEach(x=>{if(x.photo&&++withPhoto>10)delete x.photo});return p}
+$('#savePlace').onclick=async()=>{toast('Определяю место…');try{let pos=lastFix&&Date.now()-(lastFix.t||0)<20000?lastFix:await getPos();addPlace({lat:pos.lat,lon:pos.lon});toast('Место сохранено'+(db.floor?' · '+db.floor:''))}catch(e){addPlace({});toast('GPS недоступен — сохранил этаж и время')}persist();placesOpen=true;renderPlaces()};
+$('#placePhoto').onchange=async e=>{let f=e.target.files[0];e.target.value='';if(!f)return;try{let photo=await shrink(f,480,.6);let recent=db.places[0];if(recent&&Date.now()-recent.at<10*60000&&!recent.photo)recent.photo=photo;else{let pos=null;try{pos=await getPos()}catch(_){}addPlace({photo,...(pos?{lat:pos.lat,lon:pos.lon}:{})})}persist();placesOpen=true;renderPlaces();toast('Фото места сохранено')}catch(err){toast('Не удалось обработать фото')}};
+function shrink(file,max,q){return new Promise((res,rej)=>{let img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{let k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',q))};img.onerror=rej;img.src=url})}
+$('#togglePlaces').onclick=()=>{placesOpen=!placesOpen;renderPlaces()};
+function renderPlaces(){let box=$('#placesBox');box.classList.toggle('hidden',!placesOpen);$('#togglePlaces').style.borderColor=placesOpen?'var(--orange)':'';if(!placesOpen)return;
+ box.innerHTML=db.places.length?db.places.map(p=>`<div class="item place">${p.photo?`<img src="${p.photo}" alt="Фото места">`:''}<div style="flex:1;min-width:0"><b>${p.floor?esc(p.floor)+' · ':''}${new Date(p.at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</b><div class="muted" style="font-size:12px">${p.lat?`${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}`:'без координат'}</div>${p.lat?`<a class="text-btn" href="https://map.kakao.com/link/map/RIDELOG,${p.lat},${p.lon}" target="_blank" rel="noopener">Kakao</a> · <a class="text-btn" href="https://maps.google.com/?q=${p.lat},${p.lon}" target="_blank" rel="noopener">Google</a>`:''}</div><button class="text-btn del" style="font-size:20px" data-del-place="${p.id}" aria-label="Удалить">×</button></div>`).join(''):'<div class="muted">Сохранённых мест нет. Нажми «📍 Место», когда паркуешься.</div>'}
+
+/* SOS */
+$('#sosBtn').onclick=async()=>{$('#sosDlg').showModal();$('#sosCoords').textContent='определяю…';try{let p=lastFix||await getPos();$('#sosCoords').textContent=`${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}`;$('#sosMap').href=`https://maps.google.com/?q=${p.lat},${p.lon}`}catch(e){$('#sosCoords').textContent='GPS недоступен'}};
+$('#sosClose').onclick=()=>$('#sosDlg').close();
+$('#sosCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#sosCoords').textContent);toast('Скопировано')}catch(e){toast('Не удалось скопировать')}};
+
+/* Погода — только если включена в настройках */
+const WMO={0:'☀️ ясно',1:'🌤 малооблачно',2:'⛅ облачно',3:'☁️ пасмурно',45:'🌫 туман',48:'🌫 туман',51:'🌦 морось',53:'🌦 морось',55:'🌦 морось',61:'🌧 дождь',63:'🌧 дождь',65:'🌧 ливень',66:'🌧 ледяной дождь',67:'🌧 ледяной дождь',71:'🌨 снег',73:'🌨 снег',75:'❄️ снегопад',77:'🌨 снег',80:'🌦 ливни',81:'🌧 ливни',82:'⛈ ливни',85:'🌨 снег',86:'🌨 снег',95:'⛈ гроза',96:'⛈ гроза',99:'⛈ гроза'};
+let weatherAt=0;
+async function loadWeather(){if(!db.settings.weather){$('#hudWeather').textContent='';return}if(Date.now()-weatherAt<30*60000)return;weatherAt=Date.now();
+ try{let p=lastFix||await getPos();let r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.lat.toFixed(2)}&longitude=${p.lon.toFixed(2)}&current=temperature_2m,weather_code&timezone=auto`);let j=await r.json();$('#hudWeather').textContent=`${Math.round(j.current.temperature_2m)}° ${WMO[j.current.weather_code]||''}`}catch(e){weatherAt=0;$('#hudWeather').textContent=''}}
+
+/* Форма смены */
+$('#platChips').innerHTML=PLATFORMS.map((p,i)=>`<label><input type="radio" name="platform" value="${esc(p.name)}" ${i===0?'checked':''}><span>${esc(p.short)}</span></label>`).join('');
+function resetShiftForm(){let f=$('#shiftForm');f.elements.date.value=today();let last=db.shifts[db.shifts.length-1];if(last){let r=[...f.querySelectorAll('input[name=platform]')].find(x=>x.value===last.platform);if(r)r.checked=true}}
+$('#shiftForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));
+ let s={id:uid(),platform:x.platform||'Другое',date:x.date||today(),orders:num(x.orders),minutes:num(x.minutes),income:num(x.income),bonus:num(x.bonus),km:num(x.km),deduction:num(x.deduction),area:(x.area||'').trim(),note:(x.note||'').trim()};
+ if(!s.income&&!s.orders&&!s.bonus)return toast('Впиши хотя бы доход или количество заказов');
+ db.shifts.push(s);if(s.km>0)db.odo=Math.round((num(db.odo)+s.km)*10)/10;db.pendingShift=null;e.target.reset();resetShiftForm();save();toast('Смена сохранена')});
+function renderShiftHistory(){let list=db.shifts.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,30);
+ $('#shiftHistory').innerHTML=list.length?list.map(s=>`<div class="item row"><div style="min-width:0">${badge(s.platform)} <b>${esc(s.date)}</b><div class="muted" style="font-size:12px;margin-top:4px">${num(s.orders)} зак. · ${fmtMin(s.minutes)} · ${num(s.km).toFixed(1)} км${s.area?' · '+esc(s.area):''}</div></div><div class="right"><b class="green">${won(shInc(s))}</b><div><button class="text-btn del" data-del-shift="${s.id}">Удалить</button></div></div></div>`).join(''):'<span class="muted">Смен пока нет.</span>';
+ $('#areaList').innerHTML=[...new Set(db.shifts.map(s=>s.area).filter(Boolean))].map(a=>`<option value="${esc(a)}">`).join('')}
+
+/* ---------- Статистика ---------- */
+let mode='w',anchor=new Date();
+const WD=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+function periodRange(){let a=new Date(anchor.getFullYear(),anchor.getMonth(),anchor.getDate()),ws=num(db.settings.weekStart);
+ if(mode==='d'){let k=localDate(a);return {from:k,to:k,label:a.toLocaleDateString('ru-RU',{day:'numeric',month:'long',weekday:'short'})}}
+ if(mode==='w'){let s=new Date(a);s.setDate(a.getDate()-((a.getDay()-ws+7)%7));let e=new Date(s);e.setDate(s.getDate()+6);return {from:localDate(s),to:localDate(e),start:s,label:`${s.toLocaleDateString('ru-RU',{day:'numeric',month:'short'})} — ${e.toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}`}}
+ if(mode==='m'){let s=new Date(a.getFullYear(),a.getMonth(),1),e=new Date(a.getFullYear(),a.getMonth()+1,0);return {from:localDate(s),to:localDate(e),label:s.toLocaleDateString('ru-RU',{month:'long',year:'numeric'})}}
+ if(mode==='y')return {from:`${a.getFullYear()}-01-01`,to:`${a.getFullYear()}-12-31`,label:String(a.getFullYear())};
+ return {from:'0000-01-01',to:'9999-12-31',label:'Всё время'}}
+function shiftAnchor(d){if(mode==='d')anchor.setDate(anchor.getDate()+d);else if(mode==='w')anchor.setDate(anchor.getDate()+7*d);else if(mode==='m')anchor=new Date(anchor.getFullYear(),anchor.getMonth()+d,1);else if(mode==='y')anchor=new Date(anchor.getFullYear()+d,0,1);renderStats()}
+$('#perPrev').onclick=()=>shiftAnchor(-1);$('#perNext').onclick=()=>shiftAnchor(1);
+$('#modeTabs').onclick=e=>{let b=e.target.closest('[data-mode]');if(!b)return;mode=b.dataset.mode;anchor=new Date();$$('#modeTabs .tab').forEach(x=>x.classList.toggle('active',x===b));renderStats()};
+$('#weekStart').onchange=e=>{db.settings.weekStart=+e.target.value;save()};
+function statRows(r,sh,mo){
+ const mk=(label,key,s,m)=>({label,key,t:totals(s,m),plats:[...new Set(s.map(x=>x.platform))]});
+ if(mode==='d')return sh.map((s,i)=>mk('#'+(i+1),s.date,[s],[]));
+ if(mode==='w'){let out=[];for(let i=0;i<7;i++){let d=new Date(r.start);d.setDate(d.getDate()+i);let k=localDate(d);out.push(mk(WD[d.getDay()],k,sh.filter(x=>x.date===k),mo.filter(x=>x.date===k)))}return out}
+ if(mode==='m'){let n=parseD(r.to).getDate(),out=[];for(let i=1;i<=n;i++){let k=r.from.slice(0,8)+String(i).padStart(2,'0');out.push(mk(String(i),k,sh.filter(x=>x.date===k),mo.filter(x=>x.date===k)))}return out}
+ let ym=mode==='y'?[...Array(12)].map((_,i)=>r.from.slice(0,5)+String(i+1).padStart(2,'0')):[...new Set([...sh,...mo].map(x=>(x.date||'').slice(0,7)))].filter(Boolean).sort();
+ return ym.map(p=>mk(mode==='y'?new Date(+p.slice(0,4),+p.slice(5)-1,1).toLocaleDateString('ru-RU',{month:'short'}):p,p,sh.filter(x=>x.date.startsWith(p)),mo.filter(x=>(x.date||'').startsWith(p))))}
+// Простой SVG-график: прямые линии/столбики, только реальные значения (без сглаживания и выдуманных провалов)
+function chartSVG(points,kind,color){
+ const W=340,H=170,L=34,B=22,T=16,R=8,n=points.length;if(!n)return '<div class="muted">Нет данных.</div>';
+ let vals=points.map(p=>p.v).filter(v=>v!=null&&v>0);if(!vals.length)return '<div class="muted">Нет данных за период.</div>';
+ let max=Math.max(...vals),mag=Math.pow(10,Math.floor(Math.log10(max))),step=[1,2,2.5,5,10].map(k=>k*mag).find(s=>max/s<=4)||10*mag,top=Math.ceil(max/step)*step;
+ let x=i=>L+(n===1?(W-L-R)/2:i*(W-L-R)/(n-1)),xb=i=>L+(i+.5)*(W-L-R)/n,bw=Math.max(3,Math.min(26,(W-L-R)/n*.6)),y=v=>T+(H-T-B)*(1-v/top),X=kind==='bar'?xb:x;
+ let short=v=>v>=1000?(v/1000).toFixed(v>=10000?0:1)+'k':fmtN(v);
+ let grid='';for(let v=0;v<=top+1e-9;v+=step)grid+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="#1d232c"/><text x="${L-5}" y="${y(v)+3}" text-anchor="end">${short(v)}</text>`;
+ let every=Math.ceil(n/8),lab='';points.forEach((p,i)=>{if(i%every===0||i===n-1)lab+=`<text x="${X(i)}" y="${H-6}" text-anchor="middle">${esc(p.label)}</text>`});
+ let body='';
+ if(kind==='bar')points.forEach((p,i)=>{if(!p.v)return;body+=`<rect x="${xb(i)-bw/2}" y="${y(p.v)}" width="${bw}" height="${H-B-y(p.v)}" rx="3" fill="${color}"/>${n<=12?`<text x="${xb(i)}" y="${y(p.v)-4}" text-anchor="middle" style="fill:#c5ccd5">${short(p.v)}</text>`:''}`});
+ else{let pts=points.map((p,i)=>p.v?[x(i),y(p.v),p.v]:null).filter(Boolean);
+  if(pts.length>1)body+=`<polyline points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  pts.forEach(p=>{body+=`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${color}"/>${n<=12||pts.length<=8?`<text x="${p[0]}" y="${p[1]-9}" text-anchor="middle" style="fill:#c5ccd5">${short(p[2])}</text>`:''}`})}
+ return `<svg viewBox="0 0 ${W} ${H}" role="img">${grid}${body}${lab}</svg>`}
+function renderStats(){
+ let r=periodRange();$('#perLabel').textContent=r.label;$('#perNav').classList.toggle('hidden',mode==='all');$('#weekStart').classList.toggle('hidden',mode!=='w');$('#weekStart').value=String(db.settings.weekStart);
+ let sh=db.shifts.filter(x=>inR(x.date,r.from,r.to)),mo=db.money.filter(x=>inR(x.date||'',r.from,r.to)),t=totals(sh,mo);
+ $('#pNet').innerHTML=(t.net<0?'−':'')+fmtN(Math.abs(t.net))+' <small>₩</small>';$('#pNet').className='amount'+(t.net<0?' red':'');
+ $('#pInc').textContent=fmtN(t.inc);$('#pExp').textContent=fmtN(t.exp);$('#pFee').textContent=fmtN(t.fee);$('#pBonus').textContent=fmtN(t.bonus);$('#pOrders').textContent=t.orders;$('#pKm').textContent=t.km.toFixed(1);$('#pTime').textContent=fmtMin(t.min);$('#pHour').textContent=fmtN(t.min?t.workInc/(t.min/60):0);
+ $('#ePerOrder').textContent=fmtN(t.orders?t.workInc/t.orders:0);$('#eKmOrder').textContent=t.orders?(t.km/t.orders).toFixed(1):'0';$('#ePerKm').textContent=fmtN(t.km?t.workInc/t.km:0);
+ let rows=statRows(r,sh,mo),tk=today();
+ let shown=mode==='w'?rows:rows.filter(x=>x.t.orders||x.t.inc||x.t.exp);
+ $('#tblTitle').textContent={d:'Смены за день',w:'По дням недели',m:'По дням месяца',y:'По месяцам',all:'По месяцам'}[mode];
+ $('#perTable').innerHTML=`<thead><tr><th>${mode==='y'||mode==='all'?'Месяц':mode==='d'?'Смена':'День'}</th><th class="c">Плат.</th><th>Зак.</th><th>Оплата</th><th>Миссии</th><th>Время</th><th>Км</th></tr></thead><tbody>`+
+  (shown.length?shown.map(x=>`<tr class="${x.t.orders||x.t.inc?'':'empty'} ${x.key===tk?'today':''}"><td>${esc(x.label)}</td><td class="c">${x.plats.length?x.plats.map(badge).join(' '):'—'}</td><td>${x.t.orders}</td><td>${fmtN(x.t.fee)}</td><td>${fmtN(x.t.bonus)}</td><td>${fmtMin(x.t.min)}</td><td>${x.t.km?x.t.km.toFixed(1):'0'}</td></tr>`).join(''):'<tr class="empty"><td colspan="7">Нет смен за период.</td></tr>')+
+  (shown.length>1?`<tr><td><b>Итого</b></td><td></td><td><b>${t.orders}</b></td><td><b>${fmtN(t.fee)}</b></td><td><b>${fmtN(t.bonus)}</b></td><td><b>${fmtMin(t.min)}</b></td><td><b>${t.km.toFixed(1)}</b></td></tr>`:'')+'</tbody>';
+ let workDays=new Set(sh.map(x=>x.date)).size;
+ $('#avgDay').innerHTML=workDays?`Рабочих дней: <b>${workDays}</b> · в среднем <b class="green">${won(t.workInc/workDays)}</b> за рабочий день${mode==='w'?` · <b>${won(t.workInc/7)}</b> в среднем на день недели`:''}`:'';
+ $$('#stats .chart').forEach(c=>c.classList.toggle('hidden',mode==='d'));
+ if(mode!=='d'){$('#chartHour').innerHTML=chartSVG(rows.map(x=>({label:x.label,v:x.t.min?Math.round(x.t.workInc/(x.t.min/60)):null})),'line','#ff7900');
+  $('#chartOrders').innerHTML=chartSVG(rows.map(x=>({label:x.label,v:x.t.orders||0})),'bar','#00d889')}
+ renderPlatforms(sh);
+ let areas={};sh.forEach(x=>{if(x.area){let a=areas[x.area]??={inc:0,min:0,orders:0};a.inc+=shInc(x);a.min+=num(x.minutes);a.orders+=num(x.orders)}});
+ $('#areaStats').innerHTML=Object.entries(areas).sort((a,b)=>b[1].inc-a[1].inc).map(([a,v])=>`<div class="item row"><div><b>${esc(a)}</b><div class="muted" style="font-size:12px">${v.orders} зак.${v.min?' · '+won(v.inc/(v.min/60))+'/ч':''}</div></div><b class="orange">${won(v.inc)}</b></div>`).join('')||'Добавляй район в итогах смены.';
+}
+function renderPlatforms(sh){
+ let tax=(num(db.settings.taxRate)+num(db.settings.insRate))/100,pl={};
+ sh.forEach(x=>{let p=pl[x.platform]??={inc:0,ded:0,orders:0,km:0,min:0,n:0};p.inc+=shInc(x);p.ded+=num(x.deduction);p.orders+=num(x.orders);p.km+=num(x.km);p.min+=num(x.minutes);p.n++});
+ let arr=Object.entries(pl).map(([name,v])=>{let rate=v.inc?Math.min(1,v.ded/v.inc+tax):0;return {name,...v,rate,net:v.inc*(1-rate),hourNet:v.min?v.inc*(1-rate)/(v.min/60):0}}).sort((a,b)=>b.hourNet-a.hourNet||b.net-a.net);
+ if(!arr.length){$('#platCompare').innerHTML='Нет смен за период.';return}
+ $('#platCompare').innerHTML=arr.map((p,i)=>`<div class="plat ${i===0&&arr.length>1?'best':''}"><div class="row"><div style="min-width:0">${badge(p.name)} <b>${esc(platOf(p.name).name)}</b> ${i===0&&arr.length>1?'<span class="tag">🏆 ЛУЧШЕ</span>':''}<div class="muted" style="font-size:12px;margin-top:5px">${p.n} смен · ${p.orders} заказов · ${won(p.inc)}</div></div><div class="right"><b class="orange">${won(1e6*(1-p.rate))}</b><div class="muted" style="font-size:11px">на руки с ₩1 000 000</div></div></div>
+ <div class="bar"><i style="width:${(100*(1-p.rate)).toFixed(1)}%"></i></div><div class="muted" style="font-size:11px">Удержания ${(p.rate*100).toFixed(1)}%: вычеты ${p.inc?(p.ded/p.inc*100).toFixed(1):0}% + налог/взносы ${(tax*100).toFixed(1)}%</div>
+ <div class="grid3 section"><div class="mini hl"><b>${fmtN(p.min?p.inc/(p.min/60):0)}</b><small>₩/час</small></div><div class="mini"><b>${p.km.toFixed(1)}</b><small>км</small></div><div class="mini"><b>${fmtN(p.orders?p.inc/p.orders:0)}</b><small>₩/заказ</small></div><div class="mini"><b>${p.orders?(p.km/p.orders).toFixed(1):'0'}</b><small>км/заказ</small></div><div class="mini hl"><b>${fmtN(p.km?p.inc/p.km:0)}</b><small>₩/км</small></div><div class="mini"><b>${fmtN(p.hourNet)}</b><small>₩/час на руки</small></div></div></div>`).join('')}
+
+/* ---------- Финансы ---------- */
+let moneyFilter='all';
+function setCats(){$('#moneyCat').innerHTML=($('#moneyType').value==='expense'?EXP_CATS:INC_CATS).map(c=>`<option>${c}</option>`).join('')}
+$('#moneyType').onchange=setCats;setCats();
+function renderFinance(){let t=totals(db.shifts,db.money);$('#allNet').textContent=won(t.net);$('#allIncome').textContent=won(t.inc);$('#allExpense').textContent=won(t.exp);
+ let f=(moneyFilter==='all'?db.money:db.money.filter(x=>x.type===moneyFilter)).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+ $('#moneyHistory').innerHTML=f.length?f.slice(0,100).map(x=>`<div class="item row"><div style="min-width:0"><b>${esc(x.category)}</b><div class="muted" style="font-size:12px">${esc(x.date)}${x.note?' · '+esc(x.note):''}</div></div><div class="right"><b class="${x.type==='expense'?'orange':'green'}">${x.type==='expense'?'−':'+'}${won(x.amount)}</b><div><button class="text-btn del" data-del-money="${x.id}">Удалить</button></div></div></div>`).join(''):'<span class="muted">Нет финансовых записей.</span>';
+ $('#bills').innerHTML=db.bills.map((x,i)=>`<div class="item row"><div><b>${esc(x.name)}</b><div class="muted">Каждый месяц · ${x.day}-е число</div></div><div><b>${won(x.amount)}</b> <button class="text-btn del" data-del-bill="${i}">×</button></div></div>`).join('')||'<span class="muted">Постоянных платежей нет.</span>'}
+$$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{moneyFilter=b.dataset.filter;$$('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderFinance()}));
+$('#moneyForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.amount=num(x.amount);x.id=uid();db.money.push(x);e.target.elements.amount.value='';e.target.elements.note.value='';save();toast('Запись сохранена')});
+$('#billForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.amount=num(x.amount);x.day=num(x.day);db.bills.push(x);e.target.reset();save()});
+
+/* ---------- Мото: расходники ---------- */
+// [группа, название, интервал км, интервал мес., подсказка] — примерные значения, редактируются
+const TEMPLATES=[
+ ['Двигатель и привод','Моторное масло',3000,6,'синтетика'],['Двигатель и привод','Масляный фильтр',6000,0,'каждая 2-я замена масла'],['Двигатель и привод','Масло редуктора (трансмиссия)',10000,0,''],['Двигатель и привод','Ремень вариатора',15000,0,'осмотр на трещины'],['Двигатель и привод','Ролики вариатора',15000,0,''],
+ ['Тормоза и ходовая','Тормозные колодки передние',10000,0,'или остаток ≤ 2 мм'],['Тормоза и ходовая','Тормозные колодки задние',10000,0,'или остаток ≤ 2 мм'],['Тормоза и ходовая','Тормозная жидкость',20000,24,''],['Тормоза и ходовая','Передняя шина',15000,48,'износ до индикатора'],['Тормоза и ходовая','Задняя шина',10000,48,'износ до индикатора'],
+ ['Электрика и впуск','Свечи зажигания',10000,0,''],['Электрика и впуск','Воздушный фильтр',10000,0,'чаще в пыли'],['Электрика и впуск','Аккумулятор',0,30,'или просадка напряжения'],['Электрика и впуск','Охлаждающая жидкость',20000,24,'']];
+const GROUPS=['Двигатель и привод','Тормоза и ходовая','Электрика и впуск','Другое'];
+function svcStatus(s){let odo=num(db.odo),fr=[],txt=[];
+ if(num(s.interval)>0){let left=num(s.last)+num(s.interval)-odo;fr.push((odo-num(s.last))/num(s.interval));txt.push(left<=0?`просрочено на ${fmtN(-left)} км`:`через ${fmtN(left)} км`)}
+ if(num(s.months)>0&&s.lastDate){let due=parseD(s.lastDate);due.setMonth(due.getMonth()+num(s.months));let days=Math.round((due-parseD(today()))/864e5),total=Math.max(1,(due-parseD(s.lastDate))/864e5);fr.push(1-days/total);txt.push(days<=0?'срок прошёл':`до ${due.toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'})}`)}
+ let frac=fr.length?Math.max(...fr):0;return {frac,text:txt.join(' · ')||'без интервала',pct:Math.max(0,Math.min(100,frac*100))}}
+function renderBike(){
+ $('#odoValue').innerHTML=fmtN(db.odo)+' <small>км</small>';$('#odoNote').textContent=(db.odoDate?'Обновлено '+db.odoDate+'. ':'')+'Км сохранённых смен прибавляются автоматически.';
+ let html='';GROUPS.forEach(g=>{let items=db.services.map((s,i)=>({s,i})).filter(x=>(x.s.group||'Другое')===g);if(!items.length)return;html+=`<div class="svc-group">${g}</div><div class="list">`+items.map(({s,i})=>{let st=svcStatus(s);return `<div class="item" data-svc-edit="${i}" style="cursor:pointer"><div class="row"><b>${esc(s.name)}</b><span class="${st.frac>=1?'red':st.frac>=.85?'orange':'muted'}" style="font-size:13px;text-align:right">${esc(st.text)}</span></div><div class="bar"><i class="${st.frac>=1?'warn':''}" style="width:${st.pct}%"></i></div><div class="row muted" style="font-size:12px"><span>${[num(s.interval)?'каждые '+fmtN(s.interval)+' км':'',num(s.months)?(num(s.interval)?'или ':'каждые ')+s.months+' мес.':'',s.hint].filter(Boolean).map(esc).join(' · ')}<br>последняя: ${s.last!=null&&s.last!==''?fmtN(s.last)+' км':'—'}${s.lastDate?' · '+esc(s.lastDate):''}</span><button class="btn success" style="padding:8px 12px;font-size:12px;flex:none" data-svc-done="${i}">✓ Заменил</button></div></div>`}).join('')+'</div>'});
+ $('#serviceList').innerHTML=html||'<p class="muted">Пунктов нет. Добавь стандартный список ниже — потом поправишь интервалы под себя.</p>';
+ $('#addTemplates').classList.toggle('hidden',TEMPLATES.every(t=>db.services.some(s=>s.name===t[1])));
+ $('#repairHistory').innerHTML=db.repairs.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(x=>`<div class="item row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.date)} · ${fmtN(x.odo)} км</div></div><b>${won(x.cost)}</b></div>`).join('')||'<span class="muted">История пока пустая.</span>';
+ let costs=sum(db.repairs,'cost');$('#bikeCosts').textContent=won(costs);$('#costPerKm').textContent=won(db.odo?costs/db.odo:0)}
+$('#addTemplates').onclick=()=>{let added=0;TEMPLATES.forEach(([group,name,interval,months,hint])=>{if(!db.services.some(s=>s.name===name)){db.services.push({id:uid(),group,name,interval,months,hint,last:num(db.odo),lastDate:today()});added++}});save();toast(`Добавлено: ${added}. Укажи у пунктов пробег последней замены.`)};
+const svcDlg=$('#svcDlg'),svcForm=$('#svcForm');
+function openSvc(mode,i){let s=i!=null?db.services[i]:{group:'Другое'},f=svcForm.elements;svcForm.reset();f.mode.value=mode;f.idx.value=i??'';
+ f.name.value=s.name||'';f.interval.value=s.interval||'';f.months.value=s.months||'';f.hint.value=s.hint||'';f.group.value=s.group||'Другое';
+ if(mode==='done'){$('#svcTitle').textContent='Заменил: '+(s.name||'');f.last.value=num(db.odo)||'';f.lastDate.value=today();$('#svcLastLbl').textContent='Пробег при замене, км'}
+ else{$('#svcTitle').textContent=mode==='new'?'Новый пункт':'Изменить пункт';f.last.value=s.last??(num(db.odo)||'');f.lastDate.value=s.lastDate||today();$('#svcLastLbl').textContent='Последняя замена, км'}
+ $('#svcCostF').classList.toggle('hidden',mode!=='done');$('#svcDelete').classList.toggle('hidden',mode!=='edit');svcDlg.showModal()}
+$('#addSvc').onclick=()=>openSvc('new',null);
+$('#serviceList').onclick=e=>{let d=e.target.closest('[data-svc-done]');if(d){e.stopPropagation();return openSvc('done',+d.dataset.svcDone)}let ed=e.target.closest('[data-svc-edit]');if(ed)openSvc('edit',+ed.dataset.svcEdit)};
+svcForm.addEventListener('submit',e=>{let v=e.submitter?.value;if(v==='cancel')return;e.preventDefault();let f=Object.fromEntries(new FormData(svcForm)),i=f.idx===''?null:+f.idx;
+ if(v==='delete'){if(confirm('Удалить пункт? История ремонта останется.')){db.services.splice(i,1);save();svcDlg.close()}return}
+ let item={id:i!=null?db.services[i].id:uid(),name:f.name.trim(),group:f.group,interval:num(f.interval),months:num(f.months),hint:f.hint.trim(),last:f.last===''?num(db.odo):num(f.last),lastDate:f.lastDate||today()};
+ if(i!=null)db.services[i]={...db.services[i],...item};else db.services.push(item);
+ if(f.mode==='done'){let cost=num(f.cost);db.repairs.push({name:item.name,odo:item.last,cost,date:item.lastDate});if(cost)db.money.push({id:uid(),type:'expense',category:'Ремонт',amount:cost,date:item.lastDate,note:item.name});if(item.last>num(db.odo)){db.odo=item.last;db.odoDate=today()}}
+ save();svcDlg.close();toast(f.mode==='done'?'Замена записана':'Сохранено')});
+$('#odoForm').addEventListener('submit',e=>{e.preventDefault();let n=num(new FormData(e.target).get('odo'));if(n<num(db.odo)&&!confirm('Пробег меньше сохранённого. Всё равно заменить?'))return;db.odo=n;db.odoDate=today();e.target.reset();save();toast('Одометр обновлён')});
+$('#repairForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.odo=num(x.odo);x.cost=num(x.cost);db.repairs.push(x);if(x.cost)db.money.push({id:uid(),type:'expense',category:'Ремонт',amount:x.cost,date:x.date,note:x.name});e.target.reset();e.target.elements.date.value=today();save();toast('Ремонт записан')});
+
+/* ---------- Топливо, цели, «Ещё» ---------- */
+function renderFuel(){let f=db.fuel.slice().sort((a,b)=>a.odo-b.odo),dist=f.length>1?num(f[f.length-1].odo)-num(f[0].odo):0,lit=f.length>1?sum(f.slice(1),'liters'):0,allLit=sum(f,'liters');
+ $('#fuelEfficiency').textContent=dist>0?(lit/dist*100).toFixed(1):'—';$('#fuelPrice').textContent=allLit?won(sum(f,'cost')/allLit):'₩—';
+ $('#fuelHistory').innerHTML=f.slice().reverse().map(x=>`<div class="item row"><div><b>${x.liters} л · ${esc(x.note||'Заправка')}</b><div class="muted">${esc(x.date)} · ${fmtN(x.odo)} км</div></div><b>${won(x.cost)}</b></div>`).join('')||'<span class="muted">Нет заправок.</span>'}
+$('#fuelForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));x.odo=num(x.odo);x.liters=num(x.liters);x.cost=num(x.cost);db.fuel.push(x);db.money.push({id:uid(),type:'expense',category:'Топливо',amount:x.cost,date:x.date,note:x.note||'Заправка'});if(x.odo>num(db.odo)){db.odo=x.odo;db.odoDate=today()}e.target.reset();e.target.elements.date.value=today();save();toast('Заправка записана')});
+function renderGoals(){let month=today().slice(0,7),t=totals(db.shifts.filter(x=>x.date.startsWith(month)),db.money.filter(x=>(x.date||'').startsWith(month))),p=db.goal?Math.min(100,t.inc/db.goal*100):0;
+ $('#goalProgress').textContent=p.toFixed(0)+'%';$('#goalBar').style.width=p+'%';$('#goalText').textContent=db.goal?`${won(t.inc)} из ${won(db.goal)} за этот месяц`:'Установи цель, чтобы видеть прогресс.';
+ $('#savedTotal').textContent=won(db.saved);$('#savingText').textContent=db.savingGoal?`${Math.min(100,db.saved/db.savingGoal*100).toFixed(0)}% от цели ${won(db.savingGoal)}`:'Ручной учёт накоплений. Пополнения не меняют доходы и расходы.';
+ let td=totals(db.shifts.filter(x=>x.date===today()),[]);$('#challengeOrders').textContent=`${td.orders} / ${db.challengeOrders}`;$('#challengeIncome').textContent=`${won(td.workInc)} / ${won(db.challengeIncome)}`;
+ let cf=$('#challengeForm').elements;if(document.activeElement?.form!==$('#challengeForm')){cf.orders.value=db.challengeOrders;cf.income.value=db.challengeIncome}}
+$('#goalForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));db.goal=num(x.target);db.savingGoal=num(x.saving);save();toast('Цели обновлены')});
+$('#savingForm').addEventListener('submit',e=>{e.preventDefault();db.saved+=num(new FormData(e.target).get('amount'));e.target.reset();save();toast('Копилка пополнена')});
+$('#challengeForm').addEventListener('submit',e=>{e.preventDefault();let x=Object.fromEntries(new FormData(e.target));db.challengeOrders=num(x.orders);db.challengeIncome=num(x.income);document.activeElement?.blur();save();toast('Челлендж сохранён')});
 $('#receiptForm').addEventListener('submit',e=>{e.preventDefault();db.receipts.push(Object.fromEntries(new FormData(e.target)));e.target.reset();e.target.elements.date.value=today();save();toast('Данные чека сохранены')});
-$('#runAI').onclick=()=>{let inc=totalIncome(),exp=totalExpense(),sh=db.shifts,orders=sum(sh,'orders'),km=sum(sh,'km'),hrs=sum(sh,'minutes')/60,plat={};sh.forEach(x=>plat[x.platform]=(plat[x.platform]||0)+Number(x.income)+Number(x.bonus));let best=Object.entries(plat).sort((a,b)=>b[1]-a[1])[0];$('#aiOutput').innerHTML=`<div class="item">Общий доход: <b class="green">${won(inc)}</b></div><div class="item">Расходы: <b class="orange">${won(exp)}</b></div><div class="item">Чистый результат: <b>${won(inc-exp)}</b></div><div class="item">Средний доход в час по сменам: <b>${won(hrs?inc/hrs:0)}</b></div><div class="item">Средний доход на заказ: <b>${won(orders?inc/orders:0)}</b></div><div class="item">Доход на км: <b>${won(km?inc/km:0)}</b></div><div class="item">Лучшая платформа: <b>${best?esc(best[0])+' · '+won(best[1]):'Пока нет данных'}</b></div>`};
+$('#settingsForm').addEventListener('submit',e=>{e.preventDefault();let f=e.target.elements;db.settings.taxRate=num(f.taxRate.value);db.settings.insRate=num(f.insRate.value);db.settings.weather=f.weather.checked;weatherAt=0;save();loadWeather();toast('Настройки сохранены')});
+function fillSettings(){let f=$('#settingsForm').elements;f.taxRate.value=db.settings.taxRate;f.insRate.value=db.settings.insRate;f.weather.checked=!!db.settings.weather}
+let cal=new Date(),calYear=cal.getFullYear(),calMonth=cal.getMonth();
+function renderMore(){
+ $('#receiptList').innerHTML=db.receipts.slice().reverse().map(x=>`<div class="item row"><div><b>${esc(x.vendor)}</b><div class="muted">${esc(x.date)} · ${esc(x.category)}</div></div><b>${won(x.amount)}</b></div>`).join('')||'<span class="muted">Чеков нет.</span>';
+ let d=new Date(calYear,calMonth,1),first=(d.getDay()+6)%7,n=new Date(calYear,calMonth+1,0).getDate();$('#monthTitle').textContent=d.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+ let html=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(w=>`<div class="muted" style="text-align:center;font-size:11px">${w}</div>`).join('')+Array(first).fill('<div></div>').join('');
+ for(let i=1;i<=n;i++){let key=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`,t=totals(db.shifts.filter(x=>x.date===key),db.money.filter(x=>x.date===key)),has=t.inc||t.exp;html+=`<button class="btn outline" data-cal="${key}" style="padding:10px 0;border-color:${has?(t.net<0?'#6b1f2c':'#a94e00'):'var(--line)'};${key===today()?'color:var(--orange)':''}">${i}</button>`}
+ $('#calendar').innerHTML=html}
+$('#runAI').onclick=()=>{let t=totals(db.shifts,db.money),best={};db.shifts.forEach(x=>{best[x.platform]=(best[x.platform]||0)+shInc(x)});
+ let wd={};db.shifts.forEach(x=>{let k=parseD(x.date).getDay(),w=wd[k]??={inc:0,min:0};w.inc+=shInc(x);w.min+=num(x.minutes)});let bestWd=Object.entries(wd).filter(x=>x[1].min).sort((a,b)=>b[1].inc/b[1].min-a[1].inc/a[1].min)[0];
+ let bp=Object.entries(best).sort((a,b)=>b[1]-a[1])[0],fuel=sum(db.money.filter(x=>x.type==='expense'&&x.category==='Топливо'),'amount');
+ $('#aiOutput').innerHTML=[`Общий доход: <b class="green">${won(t.inc)}</b>`,`Расходы: <b class="orange">${won(t.exp)}</b>`,`Чистый результат: <b>${won(t.net)}</b>`,`Средний доход в час: <b>${won(t.min?t.workInc/(t.min/60):0)}</b>`,`Доход на заказ: <b>${won(t.orders?t.workInc/t.orders:0)}</b> · на км: <b>${won(t.km?t.workInc/t.km:0)}</b>`,`Топливо: <b>${won(fuel)}</b>${t.km?` (${won(fuel/t.km)} на км смены)`:''}`,`Лучшая платформа: <b>${bp?esc(platOf(bp[0]).short)+' · '+won(bp[1]):'нет данных'}</b>`,`Самый выгодный день недели: <b>${bestWd?WD[bestWd[0]]+' · '+won(bestWd[1].inc/(bestWd[1].min/60))+'/ч':'нет данных'}</b>`].map(x=>`<div class="item">${x}</div>`).join('')};
+
 document.addEventListener('click',e=>{
-let m=e.target.closest('[data-del-money]');if(m&&confirm('Удалить эту запись?')){db.money.splice(+m.dataset.delMoney,1);save()}
-let b=e.target.closest('[data-del-bill]');if(b){db.bills.splice(+b.dataset.delBill,1);save()}
-let s=e.target.closest('[data-service-done]');if(s){let i=+s.dataset.serviceDone;db.services[i].last=Number(db.odo);save();toast('Пробег замены обновлён')}
-let c=e.target.closest('[data-cal]');if(c){let d=c.dataset.cal,sh=db.shifts.filter(x=>x.date===d);$('#calendarDay').textContent=`${d}: ${sh.length} смен · ${won(sum(sh,'income')+sum(sh,'bonus'))} дохода`}
+ let m=e.target.closest('[data-del-money]');if(m&&confirm('Удалить эту запись?')){db.money=db.money.filter(x=>x.id!==m.dataset.delMoney);save()}
+ let s=e.target.closest('[data-del-shift]');if(s&&confirm('Удалить эту смену?')){db.shifts=db.shifts.filter(x=>x.id!==s.dataset.delShift);save()}
+ let b=e.target.closest('[data-del-bill]');if(b){db.bills.splice(+b.dataset.delBill,1);save()}
+ let p=e.target.closest('[data-del-place]');if(p){db.places=db.places.filter(x=>x.id!==p.dataset.delPlace);persist();renderPlaces()}
+ let c=e.target.closest('[data-cal]');if(c){let d=c.dataset.cal,sh=db.shifts.filter(x=>x.date===d),t=totals(sh,db.money.filter(x=>x.date===d));$('#calendarDay').innerHTML=`<b>${d}</b>: ${sh.length} смен · ${t.orders} заказов · доход ${won(t.inc)} · расходы ${won(t.exp)} · итог <b>${won(t.net)}</b>`}
 });
 $('#prevMonth').onclick=()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--}renderMore()};$('#nextMonth').onclick=()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++}renderMore()};
 $('#export').onclick=()=>{let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ridelog-backup-'+today()+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);toast('Резервная копия скачана')};
-$('#import').onchange=async e=>{try{let x=JSON.parse(await e.target.files[0].text());if(!x||!Array.isArray(x.shifts)){
- if(x&&Array.isArray(x.entries)){localStorage.setItem(OLD_KEY,JSON.stringify(x));x=migrateOld()}else throw Error('format')}
+$('#import').onchange=async e=>{try{let x=JSON.parse(await e.target.files[0].text());
+ if(x&&Array.isArray(x.entries)&&!Array.isArray(x.money)){localStorage.setItem(OLD_KEY,JSON.stringify(x));x=migrateOld()}
+ if(!x||!Array.isArray(x.shifts))throw Error('format');
  if(!confirm('Заменить текущие данные импортированной копией?'))return;stopTracking();db=normalize(x);save();if(db.activeShift)startTracking();toast('Резервная копия импортирована')}catch(err){toast('Не удалось прочитать файл')}finally{e.target.value=''}};
 $('#wipe').onclick=()=>{if(confirm('Удалить ВСЕ данные RIDELOG с этого устройства?')){stopTracking();db=fresh();save();toast('Данные удалены')}};
-$$('form').forEach(f=>dateInput(f));
-$('#appVersion').textContent=APP_VERSION;$('#verPill').textContent='PRIVATE v'+APP_VERSION;
+
+/* ---------- Навигация и запуск ---------- */
+function render(){renderHome();hudUI();renderShiftHistory();renderPlaces();renderStats();renderFinance();renderBike();renderFuel();renderGoals();renderMore()}
+function go(id){if(!document.getElementById(id))id='home';try{sessionStorage.setItem('ridelog_view',id)}catch(e){}$$('.view').forEach(x=>x.classList.toggle('active',x.id===id));$$('.nav').forEach(x=>x.classList.toggle('active',x.dataset.view===id));window.scrollTo(0,0);render();if(id==='work')loadWeather()}
+$$('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
+$$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+$$('form').forEach(f=>{let x=f.querySelector('[name=date]');if(x&&!x.value)x.value=today()});
+fillSettings();resetShiftForm();
+$('#appVersion').textContent=APP_VERSION;$('#verPill').textContent='v'+APP_VERSION;
 let startView='home';try{startView=sessionStorage.getItem('ridelog_view')||'home'}catch(e){}
-go(startView);fillPending();shiftUI();
+fillPending();go(startView);
 if(db.activeShift)startTracking(); // смена продолжается после перезагрузки или обновления
 if(migrated)toast('Данные из прошлой версии перенесены');
-try{let u=sessionStorage.getItem('ridelog_updated');if(u){sessionStorage.removeItem('ridelog_updated');toast('RIDELOG обновлён до v'+APP_VERSION)}}catch(e){}
+try{if(sessionStorage.getItem('ridelog_updated')){sessionStorage.removeItem('ridelog_updated');toast('RIDELOG обновлён до v'+APP_VERSION)}}catch(e){}
 
-/* ---------- Автообновление без выхода из приложения ----------
-   Сравниваем отпечаток свежего index.html с тем, что был при запуске.
-   Если файл на сервере изменился — перезагружаем страницу (данные и смена в localStorage сохраняются). */
+/* ---------- Автообновление без выхода из приложения ---------- */
 let baseHash=null,updateReady=false,swReg=null;
 async function hashText(t){try{let b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].slice(0,8).map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=0;for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;return String(h)}}
 async function fetchHash(){let r=await fetch('./index.html?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error(r.status);return hashText(await r.text())}
-function busy(){let a=document.activeElement;return a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)}
+function busy(){let a=document.activeElement;return !!(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))||!!$('dialog[open]')}
 function applyUpdate(){try{sessionStorage.setItem('ridelog_updated','1')}catch(e){}persist();location.reload()}
 function showUpdateBar(){if($('#updateBar'))return;let b=document.createElement('button');b.id='updateBar';b.className='update-bar';b.textContent='⟳ Новая версия RIDELOG — нажми, чтобы обновить';b.onclick=applyUpdate;document.body.append(b)}
 async function checkUpdate(manual){
@@ -286,11 +527,8 @@ async function checkUpdate(manual){
  }catch(e){if(manual)toast('Нет связи — проверь интернет')}}
 $('#checkUpdate').onclick=()=>checkUpdate(true);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')return;if(updateReady&&!busy()&&!db.activeShift)return applyUpdate();checkUpdate(false);render();if(db.activeShift)keepAwake()});
-document.addEventListener('focusout',()=>{if(updateReady)setTimeout(()=>{if(updateReady&&!busy())showUpdateBar()},300)});
 setInterval(()=>{if(document.visibilityState==='visible')checkUpdate(false)},5*60*1000);
-if('serviceWorker'in navigator&&location.protocol.startsWith('http')){
- navigator.serviceWorker.register('./sw.js').then(r=>{swReg=r}).catch(()=>{});
-}
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').then(r=>{swReg=r}).catch(()=>{});
 checkUpdate(false);
 </script>
 </body></html>
