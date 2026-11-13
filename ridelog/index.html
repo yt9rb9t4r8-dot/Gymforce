@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101114">
+  <meta name="description" content="RIDELOG — личный учёт работы, денег и мотоцикла.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RIDELOG">
+  <title>RIDELOG</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="brand">RIDE<span>LOG</span></div>
+        <div class="eyebrow">YOUR WORK. YOUR MONEY. YOUR RIDE.</div>
+      </div>
+      <div class="top-actions">
+        <span class="private-pill"><i></i> PRIVATE</span>
+        <button class="icon-btn" id="settingsBtn" aria-label="Настройки">⚙</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="view active" id="view-dashboard">
+        <div class="section-head">
+          <div><div class="eyebrow" id="todayLabel">СЕГОДНЯ</div><h1>Обзор</h1></div>
+          <div class="date-chip" id="dateChip"></div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-top"><span>ЧИСТЫЙ РЕЗУЛЬТАТ СЕГОДНЯ</span><span class="live-dot" id="liveDot">● OFFLINE</span></div>
+          <div class="hero-value" id="todayNet">₩0</div>
+          <div class="hero-sub">Доходы минус расходы</div>
+          <div class="hero-stats">
+            <div><span>Доход</span><b id="todayIncome">₩0</b></div>
+            <div><span>Расходы</span><b class="orange-text" id="todayExpenses">₩0</b></div>
+          </div>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card"><span class="metric-icon">📦</span><b id="todayOrders">0</b><small>Заказов</small></article>
+          <article class="metric-card"><span class="metric-icon">📍</span><b id="todayKm">0 км</b><small>Пробег сегодня</small></article>
+          <article class="metric-card"><span class="metric-icon">◷</span><b id="todayHours">0 ч</b><small>Время работы</small></article>
+          <article class="metric-card"><span class="metric-icon">↗</span><b id="todayPerHour">₩0</b><small>Доход / час</small></article>
+        </div>
+        <div class="section-head compact"><div><div class="eyebrow">БЫСТРЫЕ ДЕЙСТВИЯ</div><h2>Что делаем?</h2></div></div>
+        <div class="quick-grid">
+          <button class="quick-card primary" data-go="work"><span>＋</span><b>Начать смену</b><small>GPS и рабочее время</small></button>
+          <button class="quick-card" data-go="finance"><span>↙</span><b>Добавить расход</b><small>Записать покупку</small></button>
+          <button class="quick-card" data-go="calendar"><span>▦</span><b>Календарь</b><small>История по дням</small></button>
+          <button class="quick-card" data-go="bike"><span>⚙</span><b>Мотоцикл</b><small>Пробег и обслуживание</small></button>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><div class="eyebrow">ПОСЛЕДНИЕ ЗАПИСИ</div><h2>Активность</h2></div><button class="text-btn" data-go="finance">Все записи →</button></div>
+          <div id="recentList" class="list-empty">Пока нет записей. Добавь первый доход или расход.</div>
+        </div>
+      </section>
+
+      <section class="view" id="view-work">
+        <div class="section-head"><div><div class="eyebrow">GPS TRACKING</div><h1>Работа</h1></div><span class="status-badge" id="workStatus">Смена не начата</span></div>
+        <div class="gps-card">
+          <div class="gps-orb">⌖</div>
+          <div class="eyebrow">ТЕКУЩАЯ СМЕНА</div>
+          <div class="gps-distance" id="sessionKm">0.00 <small>км</small></div>
+          <div class="gps-meta"><span>Время <b id="sessionTime">00:00:00</b></span><span>GPS <b id="gpsStatus">Ожидание</b></span></div>
+          <div class="gps-buttons"><button class="btn btn-primary" id="startWork">▶ Начать смену</button><button class="btn btn-secondary hidden" id="resumeWork">▶ Продолжить</button><button class="btn btn-stop hidden" id="finishWork">■ Завершить</button><button class="btn btn-ghost hidden" id="cancelWork">Отменить смену</button></div>
+          <p class="hint">Разреши доступ к геолокации. На iPhone GPS в этой PWA надёжнее работает при открытом экране — во время смены приложение старается не давать экрану гаснуть. Не рассчитывай на непрерывную запись при блокировке телефона.</p>
+        </div>
+        <div class="metric-grid two">
+          <article class="metric-card"><span class="metric-icon">📍</span><b id="gpsPoints">0</b><small>GPS-точек</small></article>
+          <article class="metric-card"><span class="metric-icon">◷</span><b id="sessionStart">—</b><small>Начало смены</small></article>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><div class="eyebrow">ПОСЛЕ РАБОТЫ</div><h2>Итоги смены</h2></div></div>
+          <form id="shiftForm" class="form-grid">
+            <label>Платформа<select name="platform"><option>Coupang Eats</option><option>Baemin Connect</option><option>Другое</option></select></label>
+            <label>Количество заказов<input name="orders" type="number" min="0" step="1" placeholder="Например, 30"></label>
+            <label>Заработок (₩)<input name="income" type="number" min="0" step="100" placeholder="Например, 230000"></label>
+            <label>Бонусы (₩)<input name="bonus" type="number" min="0" step="100" placeholder="0"></label>
+            <label class="full">Заметка<input name="note" maxlength="160" placeholder="Например, вечерняя смена"></label>
+            <label class="full check"><input type="checkbox" name="addToOdo" checked><span>Прибавить GPS-км смены к одометру мотоцикла</span></label>
+            <button class="btn btn-primary full" type="submit">Сохранить смену</button>
+          </form>
+        </div>
+        <div class="panel"><div class="panel-head"><h2>Маршрут смены</h2><span class="eyebrow">ЛОКАЛЬНО</span></div><div id="routeMap" class="route-map hidden"></div><div id="routeInfo" class="route-placeholder">Маршрут появится после запуска GPS.</div></div>
+      </section>
+
+      <section class="view" id="view-finance">
+        <div class="section-head"><div><div class="eyebrow">MONEY MANAGEMENT</div><h1>Финансы</h1></div><button class="btn btn-small btn-primary" id="addEntryTop">＋ Запись</button></div>
+        <div class="finance-summary">
+          <div class="eyebrow">БАЛАНС ЗА ВСЁ ВРЕМЯ</div><div class="finance-total" id="allNet">₩0</div>
+          <div class="finance-breakdown"><span>Доходы <b id="allIncome">₩0</b></span><span>Расходы <b id="allExpenses">₩0</b></span></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><div class="eyebrow">НОВАЯ ТРАНЗАКЦИЯ</div><h2>Добавить запись</h2></div></div>
+          <form id="entryForm" class="form-grid">
+            <div class="segmented full"><label><input type="radio" name="type" value="expense" checked><span>− Расход</span></label><label><input type="radio" name="type" value="income"><span>＋ Доход</span></label></div>
+            <label>Категория<select name="category" id="entryCategory"></select></label>
+            <label>Сумма (₩)<input name="amount" type="number" min="1" step="1" required placeholder="15000"></label>
+            <label>Дата<input name="date" type="date" required></label>
+            <label>Способ<select name="source"><option>Наличные</option><option>Карта</option><option>Банк</option><option>Другое</option></select></label>
+            <label class="full">Комментарий<input name="note" maxlength="160" placeholder="Например, заправка"></label>
+            <button class="btn btn-primary full" type="submit">Сохранить запись</button>
+          </form>
+        </div>
+        <div class="panel"><div class="panel-head"><h2>История</h2><select id="filterType" class="filter-select"><option value="all">Все</option><option value="income">Доходы</option><option value="expense">Расходы</option></select></div><div id="entryList" class="entry-list"></div></div>
+      </section>
+
+      <section class="view" id="view-calendar">
+        <div class="section-head"><div><div class="eyebrow">WORK HISTORY</div><h1>Календарь</h1></div></div>
+        <div class="panel calendar-panel">
+          <div class="calendar-head"><button class="icon-btn" id="prevMonth">‹</button><h2 id="monthTitle"></h2><button class="icon-btn" id="nextMonth">›</button></div>
+          <div class="calendar-grid weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+          <div class="calendar-legend"><span><i class="legend-income"></i> Положительный день</span><span><i class="legend-expense"></i> Отрицательный день</span></div>
+        </div>
+        <div class="panel"><div class="panel-head"><div><div class="eyebrow">ВЫБРАННАЯ ДАТА</div><h2 id="selectedDateTitle">Выбери день</h2></div></div><div id="dayDetails" class="list-empty">Нажми на дату в календаре.</div></div>
+      </section>
+
+      <section class="view" id="view-bike">
+        <div class="section-head"><div><div class="eyebrow">MOTORCYCLE CARE</div><h1>Мотоцикл</h1></div><span class="status-badge orange">ZONTES 368G</span></div>
+        <div class="bike-card"><div class="bike-label">ТЕКУЩИЙ ПРОБЕГ</div><div class="bike-odo"><span id="bikeOdo">0</span><small>км</small></div><div class="bike-note">Общий пробег, который ты указываешь вручную. GPS-смены можно добавлять к нему отдельно.</div></div>
+        <div class="panel">
+          <div class="panel-head"><div><div class="eyebrow">ODOMETER</div><h2>Пробег мотоцикла</h2></div></div>
+          <form id="odoForm" class="form-grid"><label class="full">Текущий одометр (км)<input name="odo" type="number" min="0" step="1" required placeholder="Например, 18500"></label><button class="btn btn-primary full">Обновить пробег</button></form>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><div class="eyebrow">MAINTENANCE</div><h2>Обслуживание</h2></div><button class="text-btn" id="addService">＋ Добавить</button></div>
+          <div id="maintenanceList"></div>
+        </div>
+        <div class="panel"><div class="panel-head"><h2>История обслуживания</h2><span class="eyebrow" id="serviceTotal"></span></div><div id="serviceHistory" class="list-empty">Пока нет записей о ремонте.</div></div>
+      </section>
+
+      <section class="view" id="view-ai">
+        <div class="section-head"><div><div class="eyebrow">PERSONAL INTELLIGENCE</div><h1>AI Analyst</h1></div><span class="status-badge orange">BETA</span></div>
+        <div class="ai-hero"><div class="ai-mark">✳</div><div><h2>Твоя работа. В цифрах.</h2><p>Аналитика на основе записей RIDELOG.</p></div></div>
+        <div class="panel"><div class="panel-head"><h2>Анализ периода</h2><select id="aiPeriod" class="filter-select"><option value="7">7 дней</option><option value="30" selected>30 дней</option><option value="all">Всё время</option></select></div><div id="aiReport"></div></div>
+        <div class="panel"><div class="panel-head"><h2>Спросить RIDELOG</h2></div><div class="chat-box" id="chatBox"><div class="chat-bubble bot">Я могу посчитать доходы, расходы, километры, заказы и показать лучшие дни. Спроси, например: «Сколько я потратил на бензин за неделю?» или «Какой был лучший день?»</div></div><div class="chip-row" id="askChips"><button type="button" class="chip">Лучший день</button><button type="button" class="chip">Доход за неделю</button><button type="button" class="chip">Бензин за месяц</button><button type="button" class="chip">Расходы по категориям</button><button type="button" class="chip">Когда менять масло?</button></div><form id="askForm" class="ask-row"><input name="question" placeholder="Задай вопрос по своим данным…" required><button class="btn btn-primary">➤</button></form><p class="hint">В этой первой версии аналитик работает локально по правилам и данным приложения. Подключение настоящей AI-модели добавим отдельно через защищённый серверный ключ.</p></div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="section-head"><div><div class="eyebrow">PREFERENCES & PRIVACY</div><h1>Настройки</h1></div></div>
+        <div class="panel">
+          <h2>Личные данные</h2><p class="muted">Сейчас все записи хранятся локально в браузере на этом устройстве. Они не отправляются на сервер и не синхронизируются автоматически.</p>
+          <div class="settings-row"><span>Режим хранения</span><b>Только это устройство</b></div>
+          <div class="settings-row"><span>Экспорт данных</span><button class="text-btn" id="exportBtn">Скачать JSON ↓</button></div>
+          <div class="settings-row"><span>Импорт резервной копии</span><label class="text-btn file-label">Выбрать файл<input type="file" id="importFile" accept="application/json"></label></div>
+          <div class="settings-row"><span>Удалить все данные</span><button class="text-btn danger" id="resetBtn">Удалить</button></div>
+        </div>
+        <div class="panel"><h2>Установка на iPhone</h2><ol class="instructions"><li>Открой ссылку приложения в Safari.</li><li>Нажми кнопку «Поделиться».</li><li>Выбери «На экран Домой».</li><li>Подтверди добавление RIDELOG.</li></ol><p class="hint">Для офлайн-режима и установки сайт должен быть размещён на HTTPS-хостинге.</p></div>
+        <div class="panel"><h2>О RIDELOG</h2><p class="muted">Версия <span id="appVersion"></span> · Private PWA · Black / Orange</p><div class="settings-row"><span>Последняя резервная копия</span><b id="lastBackup">—</b></div></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-view="dashboard"><span>⌂</span><small>Обзор</small></button>
+      <button class="nav-item" data-view="work"><span>⌖</span><small>Работа</small></button>
+      <button class="nav-item" data-view="finance"><span>◈</span><small>Финансы</small></button>
+      <button class="nav-item" data-view="calendar"><span>▦</span><small>Календарь</small></button>
+      <button class="nav-item" data-view="bike"><span>⚙</span><small>Мото</small></button>
+      <button class="nav-item" data-view="ai"><span>✳</span><small>AI</small></button>
+    </nav>
+  </div>
+  <div class="toast" id="toast"></div>
+  <dialog id="serviceDialog">
+    <form method="dialog" id="serviceForm" class="dialog-card">
+      <div class="dialog-head"><h2 id="serviceDialogTitle">Добавить обслуживание</h2><button class="icon-btn" value="cancel" formnovalidate aria-label="Закрыть">×</button></div>
+      <input type="hidden" name="serviceId">
+      <label>Работа / деталь<input name="name" required list="serviceNames" placeholder="Например, замена масла"></label>
+      <datalist id="serviceNames"><option>Замена масла</option><option>Масляный фильтр</option><option>Воздушный фильтр</option><option>Тормозные колодки</option><option>Цепь и звёзды</option><option>Ремень</option><option>Передняя шина</option><option>Задняя шина</option><option>Свечи зажигания</option><option>Тормозная жидкость</option></datalist>
+      <div class="form-grid"><label>Интервал (км)<input name="interval" type="number" min="0" placeholder="1500"></label><label>Стоимость (₩)<input name="cost" type="number" min="0" placeholder="45000"></label></div>
+      <label>Пробег при обслуживании<input name="atOdo" type="number" min="0" placeholder="Текущий одометр"></label>
+      <label class="check"><input type="checkbox" name="asExpense" checked><span>Записать стоимость в расходы (категория «Ремонт»)</span></label>
+      <button class="btn btn-primary" value="save">Сохранить</button>
+    </form>
+  </dialog>
+  <script src="./app.js"></script>
+</body>
+</html>
